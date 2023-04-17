@@ -59,24 +59,24 @@ public class Fraction {
         return new Fraction(denom, num);
     }
 
-    public void plus(Fraction a) throws NumberFormatException{
-        this.num = this.num * a.denom + this.denom * a.num;
-        this.denom = this.denom * a.denom;
-        cut();
+    public Fraction plus(Fraction a) throws NumberFormatException{
+        Fraction sum = new Fraction(this.num * a.denom + this.denom * a.num, this.denom * a.denom);
+        sum.cut();
+        return sum;
     }
 
-    public void minus(Fraction a) throws NumberFormatException{
-        plus(a.negative());
+    public Fraction minus(Fraction a) throws NumberFormatException{
+        return plus(a.negative());
     }
 
-    public void multiply(Fraction a) throws NumberFormatException{
-        this.num = this.num * a.num;
-        this.denom = this.denom * a.denom;
-        cut();
+    public Fraction multiply(Fraction a) throws NumberFormatException{
+        Fraction prod = new Fraction(this.num * a.num, this.denom * a.denom);
+        prod.cut();
+        return prod;
     }
 
-    public void divide(Fraction a) throws NumberFormatException{
-        multiply(a.flip());
+    public Fraction divide(Fraction a) throws NumberFormatException{
+        return multiply(a.flip());
     }
 
     public boolean moreThen(Fraction a){
