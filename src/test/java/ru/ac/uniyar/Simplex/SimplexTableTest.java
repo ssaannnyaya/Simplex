@@ -3,7 +3,7 @@ package ru.ac.uniyar.Simplex;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
-public class SimplexTableText {
+public class SimplexTableTest {
 
 
     @Test
@@ -277,6 +277,85 @@ public class SimplexTableText {
         SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2);
 
         simplexTable1.simplexStep(1, 0);
+        assertThat(simplexTable1.equals(simplexTable2)).isTrue();
+    }
+
+    @Test
+    public void elementForSimplexStep(){
+        int n = 2;
+        int m = 2;
+        Fraction[] func = new Fraction[n + 1];
+        func[0] = new Fraction("1/2");
+        func[1] = new Fraction("1");
+        func[2] = new Fraction("0");
+        Fraction[][] table = new Fraction[n + 1][m + 1];
+        table[0][0] = new Fraction("1/3");
+        table[0][1] = new Fraction("1/3");
+        table[0][2] = new Fraction("1");
+        table[1][0] = new Fraction("2/3");
+        table[1][1] = new Fraction("-1/3");
+        table[1][2] = new Fraction("1");
+        table[2][0] = new Fraction("-1/3");
+        table[2][1] = new Fraction("-1/3");
+        table[2][2] = new Fraction("4");
+        int[] colX = new int[2];
+        colX[0] = 1;
+        colX[1] = 2;
+        int[] rowX = new int[2];
+        rowX[0] = 3;
+        rowX[1] = 4;
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        int col = simplexTable.colForSimplexStep();
+        int row = simplexTable.rowForSimplexStep(col);
+        assertThat(col).isEqualTo(0);
+        assertThat(row).isEqualTo(1);
+    }
+
+    @Test
+    public void nonParametrisedSimplexStepTest(){
+        int n = 2;
+        int m = 2;
+        Fraction[] func = new Fraction[n + 1];
+        func[0] = new Fraction("1/2");
+        func[1] = new Fraction("1");
+        func[2] = new Fraction("0");
+        Fraction[][] table1 = new Fraction[n + 1][m + 1];
+        table1[0][0] = new Fraction("1/3");
+        table1[0][1] = new Fraction("1/3");
+        table1[0][2] = new Fraction("1");
+        table1[1][0] = new Fraction("2/3");
+        table1[1][1] = new Fraction("-1/3");
+        table1[1][2] = new Fraction("1");
+        table1[2][0] = new Fraction("-1/3");
+        table1[2][1] = new Fraction("-1/3");
+        table1[2][2] = new Fraction("4");
+        int[] colX1 = new int[2];
+        colX1[0] = 1;
+        colX1[1] = 2;
+        int[] rowX1 = new int[2];
+        rowX1[0] = 3;
+        rowX1[1] = 4;
+        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1);
+
+        Fraction[][] table2 = new Fraction[n + 1][m + 1];
+        table2[0][0] = new Fraction("-1/2");
+        table2[0][1] = new Fraction("1/2");
+        table2[0][2] = new Fraction("1/2");
+        table2[1][0] = new Fraction("3/2");
+        table2[1][1] = new Fraction("-1/2");
+        table2[1][2] = new Fraction("3/2");
+        table2[2][0] = new Fraction("1/2");
+        table2[2][1] = new Fraction("-1/2");
+        table2[2][2] = new Fraction("9/2");
+        int[] colX2 = new int[2];
+        colX2[0] = 4;
+        colX2[1] = 2;
+        int[] rowX2 = new int[2];
+        rowX2[0] = 3;
+        rowX2[1] = 1;
+        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2);
+
+        simplexTable1.simplexStep();
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
     }
 

@@ -80,11 +80,11 @@ public class Fraction {
     }
 
     public boolean moreThen(Fraction a){
-        return this.num / this.denom > a.num / a.denom;
+        return (double) this.num / this.denom > (double) a.num / a.denom;
     }
 
     public boolean lessThen(Fraction a){
-        return !moreThen(a);
+        return (double) this.num / this.denom < (double) a.num / a.denom;
     }
 
     @Override

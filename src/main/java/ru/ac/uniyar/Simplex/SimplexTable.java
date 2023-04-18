@@ -78,7 +78,7 @@ public class SimplexTable {
     }
 
     /**
-     * шаг симплекс метода
+     * Шаг симплекс метода
      * @param row ряд, где находится опорный элемент
      * @param col столбец, где находится опорный элемент
      */
@@ -121,6 +121,47 @@ public class SimplexTable {
         }
     }
 
+    /**
+     * Находит столбец в котором находится наименьшее значение нижней строки
+     * @return индекс столбца
+     */
+    public int colForSimplexStep(){
+        int col = 0;
+        for (int j = 0; j < n; j++){
+            if (table[m][j].lessThen(table[m][col])){
+                col = j;
+            }
+        }
+        return col;
+    }
+
+    /**
+     * Находит строку в которой находится элемент с наименьшим положительным соотношением (самый правый элемент этой строки)/(этот элемент)
+     * @param col столбец в котором производится поиск
+     * @return строка в которой находится опорный элемент для шага симплекс-метода
+     */
+    public int rowForSimplexStep(int col){
+        int row = 0;
+        for (int i = 0; i < m; i++){
+            if (table[i][col].moreThen(Fraction.zero())) {
+                Fraction a = table[i][n].divide(table[i][col]);
+                Fraction b = table[row][n].divide(table[row][col]);
+                if (a.lessThen(b))
+                row = i;
+            }
+        }
+        return row;
+    }
+
+    /**
+     * Шаг симплекс метода
+     */
+    public void simplexStep(){
+        int col = colForSimplexStep();
+        int row = rowForSimplexStep(col);
+        simplexStep(row, col);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -138,7 +179,7 @@ public class SimplexTable {
     public int hashCode() {
         int result = Objects.hash(n, m);
         result = 31 * result + Arrays.hashCode(func);
-        result = 31 * result + Arrays.hashCode(table);
+        result = 31 * result + Arrays.deepHashCode(table);
         result = 31 * result + Arrays.hashCode(colX);
         result = 31 * result + Arrays.hashCode(rowX);
         return result;
