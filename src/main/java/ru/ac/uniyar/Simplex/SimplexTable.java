@@ -20,6 +20,26 @@ public class SimplexTable {
         this.rowX = rowX;
     }
 
+    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table){
+        int[] colX = new int[n];
+        int[] rowX = new int[m];
+        for (int j = 0; j < n; j++){
+            colX[j] = j + 1;
+        }
+        for (int i = 0; i < m; i++){
+            rowX[i] = -(n + i + 1);
+        }
+
+        this.n = n;
+        this.m = m;
+        this.func = func;
+        this.table = table;
+        this.colX = colX;
+        this.rowX = rowX;
+
+        normalize();
+    }
+
     public Fraction[][] getTable() {
         return table;
     }
@@ -157,9 +177,59 @@ public class SimplexTable {
      * Шаг симплекс метода
      */
     public void simplexStep(){
+        if (!hasSolution() || isSolved())
+            return;
         int col = colForSimplexStep();
         int row = rowForSimplexStep(col);
         simplexStep(row, col);
+    }
+
+    public void removeCol(int col){
+        n--;
+        Fraction[][] newTable = new Fraction[m][n];
+        for (int j = 0; j < col; j++){
+            for (int i = 0; i <= m; i++){
+                newTable[i][j] = table[i][j];
+            }
+        }
+        for (int j = col; j <= n; j++){
+            for (int i = 0; i <= m; i++){
+                newTable[i][j] = table[i][j + 1];
+            }
+        }
+        table = newTable;
+        int[] newColX = new int[n];
+        System.arraycopy(colX, 0, newColX, 0, col);
+        if (n - col >= 0) System.arraycopy(colX, col + 1, newColX, col, n - col);
+        colX = newColX;
+    }
+
+    public boolean hasAdditionalVars(){
+        return Arrays.stream(colX).filter(it -> it < 0).toArray().length > 0
+                || Arrays.stream(rowX).filter(it -> it < 0).toArray().length > 0;
+    }
+
+    public int findAdditionalVarColumn(){
+        for (int j = 0; j < n; j++){
+            if (colX[j] < 0){
+                return j;
+            }
+        }
+        return -1;
+    }
+
+    public void toMainTask(){
+        int[] rowIndexes = new int[m];
+        for(int i = 0; i < m; i++){
+            rowIndexes[rowX[i] - 1] = i;
+        }
+        for (int j = 0; j <= n; j++){
+            Fraction a = func[j];
+            for (int i = 0; i < m; i++){
+                a = a.minus(func[rowIndexes[i]].multiply(table[rowIndexes[i]][j]));
+            }
+            table[m][j] = a;
+        }
     }
 
     @Override

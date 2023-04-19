@@ -359,6 +359,47 @@ public class SimplexTableTest {
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
     }
 
+    @Test
+    public void anotherCreatingTest(){
+        int n1 = 2;
+        int m1 = 2;
+        Fraction[] func1 = new Fraction[n1 + 1];
+        func1[0] = new Fraction("1/2");
+        func1[1] = new Fraction("1");
+        func1[2] = new Fraction("0");
+        Fraction[][] table1 = new Fraction[n1 + 1][m1 + 1];
+        table1[0][0] = new Fraction("-1");
+        table1[0][1] = new Fraction("2");
+        table1[0][2] = new Fraction("-1");
+        table1[1][0] = new Fraction("-1/2");
+        table1[1][1] = new Fraction("2");
+        table1[1][2] = new Fraction("1");
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1);
 
+        int n2 = 2;
+        int m2 = 2;
+        Fraction[] func2 = new Fraction[n2 + 1];
+        func2[0] = new Fraction("1/2");
+        func2[1] = new Fraction("1");
+        func2[2] = new Fraction("0");
+        Fraction[][] table2 = new Fraction[n2 + 1][m2 + 1];
+        table2[0][0] = new Fraction("1");
+        table2[0][1] = new Fraction("-2");
+        table2[0][2] = new Fraction("1");
+        table2[1][0] = new Fraction("-1/2");
+        table2[1][1] = new Fraction("2");
+        table2[1][2] = new Fraction("1");
+        table2[2][0] = new Fraction("-1/2");
+        table2[2][1] = new Fraction("0");
+        table2[2][2] = new Fraction("-2");
+        int[] colX2 = new int[2];
+        colX2[0] = 1;
+        colX2[1] = 2;
+        int[] rowX2 = new int[2];
+        rowX2[0] = -3;
+        rowX2[1] = -4;
+        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2);
+        assertThat(simplexTable1.equals(simplexTable2)).isTrue();
+    }
 
 }
