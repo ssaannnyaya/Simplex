@@ -11,6 +11,15 @@ public class SimplexTable {
     private int[] colX;
     private int[] rowX;
 
+    /**
+     * Конструктор со всеми параметрами
+     * @param n количество переменных в целевой функции / количество столбцов
+     * @param m количество ограничений / количество строк
+     * @param func целевая функция
+     * @param table таблица ограничений
+     * @param colX переменные в заголовках столбцов
+     * @param rowX переменные в заголовках строк
+     */
     public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] colX, int[] rowX){
         this.n = n;
         this.m = m;
@@ -20,6 +29,17 @@ public class SimplexTable {
         this.rowX = rowX;
     }
 
+    /**
+     * Конструктор с указанием размерностей, функции и таблицы ограничений.
+     * После создания матрица приводится в вид для поиска базиса:
+     * в строки записываются дополнительные переменные,
+     * строки с отрицательными константами в ограничениях домножаются на -1,
+     * вычисляется нижний столбец
+     * @param n количество переменных в целевой функции / количество столбцов
+     * @param m количество ограничений / количество строк
+     * @param func целевая функция
+     * @param table таблица ограничений
+     */
     public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table){
         int[] colX = new int[n];
         int[] rowX = new int[m];
@@ -174,7 +194,8 @@ public class SimplexTable {
     }
 
     /**
-     * Шаг симплекс метода
+     * Шаг симплекс метода.
+     * Поиск опорного элемента, выполняется симплекс-шаг вокруг него
      */
     public void simplexStep(){
         if (!hasSolution() || isSolved())
@@ -184,9 +205,13 @@ public class SimplexTable {
         simplexStep(row, col);
     }
 
+    /**
+     * Удаление столбца из таблицы, уменьшает размерность матрицы
+     * @param col индекс столбца, который нужно удалить
+     */
     public void removeCol(int col){
-        n--;
-        Fraction[][] newTable = new Fraction[m][n];
+        n--;                                                    //уменьшаем размерность
+        Fraction[][] newTable = new Fraction[m + 1][n + 1];     //копируем данные в новую таблицу без целевого столбца
         for (int j = 0; j < col; j++){
             for (int i = 0; i <= m; i++){
                 newTable[i][j] = table[i][j];
@@ -198,17 +223,25 @@ public class SimplexTable {
             }
         }
         table = newTable;
-        int[] newColX = new int[n];
+        int[] newColX = new int[n];                             //копируем список переменных в заглавии столбцов без целевого
         System.arraycopy(colX, 0, newColX, 0, col);
         if (n - col >= 0) System.arraycopy(colX, col + 1, newColX, col, n - col);
         colX = newColX;
     }
 
+    /**
+     * Есть ли в матрице дополнительные переменные(для поиска базиса)
+     * @return Наличие дополнительных переменных
+     */
     public boolean hasAdditionalVars(){
         return Arrays.stream(colX).filter(it -> it < 0).toArray().length > 0
                 || Arrays.stream(rowX).filter(it -> it < 0).toArray().length > 0;
     }
 
+    /**
+     * Находит индекс столбца с дополнительной переменной(для поиска базиса)
+     * @return индекс столбца, если подходящего нет, то -1
+     */
     public int findAdditionalVarColumn(){
         for (int j = 0; j < n; j++){
             if (colX[j] < 0){
@@ -218,18 +251,29 @@ public class SimplexTable {
         return -1;
     }
 
+    /**
+     * Переход к основной задаче, когда базис найден, из имеющейся матрицы и функции вычисляется нижняя строчка
+     * Если есть дополнительные переменные ничего не происходит
+     */
     public void toMainTask(){
-        int[] rowIndexes = new int[m];
+        if (hasAdditionalVars())
+            return;
+        int[] rowIndexes = new int[m + n];                              //массив, хранящий индексы строк, соответствующих переменным
         for(int i = 0; i < m; i++){
             rowIndexes[rowX[i] - 1] = i;
         }
-        for (int j = 0; j <= n; j++){
-            Fraction a = func[j];
+    for (int j = 0; j < n; j++){                                        //считаем значения в нижней строке для переменных в заглавии столбцов
+            Fraction a = func[colX[j] - 1];
             for (int i = 0; i < m; i++){
-                a = a.minus(func[rowIndexes[i]].multiply(table[rowIndexes[i]][j]));
+                a = a.minus(func[rowIndexes[i]].multiply(table[i][j]));
             }
-            table[m][j] = a;
+            table[m][j] = a.negative();
         }
+        Fraction a = func[m + n];                                       //считаем значение в нижней левой ячейке
+        for (int i = 0; i < m; i++){
+            a = a.minus(func[rowIndexes[i]].multiply(table[i][n]));
+        }
+        table[m][n] = a.negative();
     }
 
     @Override
