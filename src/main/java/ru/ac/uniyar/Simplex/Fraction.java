@@ -6,13 +6,26 @@ public class Fraction {
     private transient int num;
     private transient int denom;
 
-    public Fraction(int num, int denom) throws NumberFormatException{
+    /**
+     * Конструктор дроби из двух целых чисел
+     * @param num целочисленный числитель дроби
+     * @param denom целочисленный знаменатель дроби
+     * @throws NumberFormatException если в знаменателе ноль, возникает исключение "Dividing by zero"
+     */
+    public Fraction(int num, int denom){
+        if (denom == 0)
+            throw new NumberFormatException("Dividing by zero");
         this.num = num;
         this.denom = denom;
         cut();
     }
 
-    public Fraction(String str) throws NumberFormatException{
+    /**
+     * Конструктор дроби из строки
+     * @param str Строка с формате "NUMERATOR/DENOMINATOR" или "INTEGER_NUMBER"
+     * @throws NumberFormatException если в знаменателе ноль или если неверный формат строки
+     */
+    public Fraction(String str){
         String[] data = str.split("/");
         this.num = Integer.parseInt(data[0]);
         if(data.length > 1){                        //NOPMD
@@ -20,6 +33,8 @@ public class Fraction {
         }else {
             this.denom = 1;
         }
+        if (this.denom == 0)
+            throw new NumberFormatException("Dividing by zero");
         cut();
     }
 
@@ -37,11 +52,8 @@ public class Fraction {
 
     /**
      * Сокращает дробь, если минус стоит в знаменателе, переносит его в числитель
-     * @throws NumberFormatException если в знаменателе ноль, возникает исключение "Dividing by zero"
      */
-    public final void cut() throws NumberFormatException{
-        if (this.denom == 0)
-            throw new NumberFormatException("Dividing by zero");
+    public final void cut(){
         int d = gcd(num, denom);
         this.num /= d;
         this.denom /= d;
@@ -59,23 +71,23 @@ public class Fraction {
         return new Fraction(denom, num);
     }
 
-    public Fraction plus(Fraction a) throws NumberFormatException{
+    public Fraction plus(Fraction a){
         Fraction sum = new Fraction(this.num * a.denom + this.denom * a.num, this.denom * a.denom);
         sum.cut();
         return sum;
     }
 
-    public Fraction minus(Fraction a) throws NumberFormatException{
+    public Fraction minus(Fraction a){
         return plus(a.negative());
     }
 
-    public Fraction multiply(Fraction a) throws NumberFormatException{
+    public Fraction multiply(Fraction a){
         Fraction prod = new Fraction(this.num * a.num, this.denom * a.denom);
         prod.cut();
         return prod;
     }
 
-    public Fraction divide(Fraction a) throws NumberFormatException{
+    public Fraction divide(Fraction a){
         return multiply(a.flip());
     }
 

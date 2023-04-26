@@ -7,4 +7,9 @@
     <rule ref="category/java/bestpractices.xml">
         <exclude name="UseVarargs"/>
     </rule>
+    <rule ref="category/java/design.xml">
+        <exclude name="TooManyMethods"/>
+        <exclude name="ImmutableField"/>
+        <exclude name="LawOfDemeter"/>
+    </rule>
 </ruleset>

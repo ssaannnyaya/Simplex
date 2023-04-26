@@ -122,7 +122,7 @@ public class SimplexTable {
      * @param row ряд, где находится опорный элемент
      * @param col столбец, где находится опорный элемент
      */
-    public void simplexStep(int row, int col){
+    public void simplexStep(int row, int col){  //NOPMD
         int box = colX[col];
         colX[col] = rowX[row];
         rowX[row] = box;
@@ -156,7 +156,7 @@ public class SimplexTable {
         for (int i = 0; i < row; i++){
             table[i][col] = table[i][col].multiply(table[row][col].negative());
         }
-        for (int i = row + 1; i <= n; i++){
+        for (int i = row + 1; i <= m; i++){
             table[i][col] = table[i][col].multiply(table[row][col].negative());
         }
     }
@@ -274,6 +274,10 @@ public class SimplexTable {
             a = a.minus(func[rowIndexes[i]].multiply(table[i][n]));
         }
         table[m][n] = a.negative();
+    }
+
+    public Fraction getAnswer(){
+        return table[m][n].negative();
     }
 
     @Override
