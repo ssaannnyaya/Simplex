@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class SimplexTable {
-    private int n;
-    private int m;
-    private Fraction[] func;
-    private Fraction[][] table; // m, i - rows; n, j - columns
-    private int[] colX;
-    private int[] rowX;
+    private transient int n;
+    private transient int m;
+    private transient Fraction[] func;
+    private transient Fraction[][] table; // m, i - rows; n, j - columns
+    private transient int[] colX;
+    private transient int[] rowX;
 
     /**
      * Конструктор со всеми параметрами
@@ -23,10 +23,10 @@ public class SimplexTable {
     public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] colX, int[] rowX){
         this.n = n;
         this.m = m;
-        this.func = func;
-        this.table = table;
-        this.colX = colX;
-        this.rowX = rowX;
+        this.func = func.clone();
+        this.table = table.clone();
+        this.colX = colX.clone();
+        this.rowX = rowX.clone();
     }
 
     /**
@@ -52,23 +52,23 @@ public class SimplexTable {
 
         this.n = n;
         this.m = m;
-        this.func = func;
-        this.table = table;
-        this.colX = colX;
-        this.rowX = rowX;
+        this.func = func.clone();
+        this.table = table.clone();
+        this.colX = colX.clone();
+        this.rowX = rowX.clone();
 
         normalize();
     }
 
     public Fraction[][] getTable() {
-        return table;
+        return table.clone();
     }
 
     /**
      * Если константа в ограничении отрицательная, домножаем всю строку на -1
      * Пересчитывает нижнюю строчку
      */
-    public void normalize(){
+    public final void normalize(){
         for (int i = 0; i < m; i++){
             if (table[i][n].lessThen(Fraction.zero())){
                 for (int j = 0; j <= n; j++){

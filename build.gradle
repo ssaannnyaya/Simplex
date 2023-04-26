@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'pmd'
 }
 
 group 'ru.ac.uniyar'
@@ -14,6 +15,11 @@ jar {
     manifest {
         attributes 'Main-Class': application.mainClass
     }
+}
+
+pmd{
+    ruleSetFiles = files("${rootDir}/config/pmd/pmd-ruleset.xml")
+    ruleSets = []
 }
 
 repositories {

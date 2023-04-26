@@ -3,8 +3,8 @@ package ru.ac.uniyar.Simplex;
 import java.util.Objects;
 
 public class Fraction {
-    private int num;
-    private int denom;
+    private transient int num;
+    private transient int denom;
 
     public Fraction(int num, int denom) throws NumberFormatException{
         this.num = num;
@@ -15,7 +15,7 @@ public class Fraction {
     public Fraction(String str) throws NumberFormatException{
         String[] data = str.split("/");
         this.num = Integer.parseInt(data[0]);
-        if(data.length > 1){
+        if(data.length > 1){                        //NOPMD
             this.denom = Integer.parseInt(data[1]);
         }else {
             this.denom = 1;
@@ -39,7 +39,7 @@ public class Fraction {
      * Сокращает дробь, если минус стоит в знаменателе, переносит его в числитель
      * @throws NumberFormatException если в знаменателе ноль, возникает исключение "Dividing by zero"
      */
-    public void cut() throws NumberFormatException{
+    public final void cut() throws NumberFormatException{
         if (this.denom == 0)
             throw new NumberFormatException("Dividing by zero");
         int d = gcd(num, denom);
