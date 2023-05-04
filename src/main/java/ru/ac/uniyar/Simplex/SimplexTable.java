@@ -305,20 +305,16 @@ public class SimplexTable {
     public void toMainTask(){
         if (hasAdditionalVars())
             return;
-        int[] rowIndexes = new int[m + n];                              //массив, хранящий индексы строк, соответствующих переменным
-        for(int i = 0; i < m; i++){
-            rowIndexes[rowX[i] - 1] = i;
-        }
     for (int j = 0; j < n; j++){                                        //считаем значения в нижней строке для переменных в заглавии столбцов
             Fraction a = func[colX[j] - 1];
             for (int i = 0; i < m; i++){
-                a = a.minus(func[rowIndexes[i]].multiply(table[i][j]));
+                a = a.minus(func[rowX[i]-1].multiply(table[i][j]));
             }
-            table[m][j] = a.negative();
+            table[m][j] = a;
         }
         Fraction a = func[m + n];                                       //считаем значение в нижней левой ячейке
         for (int i = 0; i < m; i++){
-            a = a.minus(func[rowIndexes[i]].multiply(table[i][n]));
+            a = a.plus(func[rowX[i]-1].multiply(table[i][n]));
         }
         table[m][n] = a.negative();
     }
@@ -353,10 +349,10 @@ public class SimplexTable {
     @Override
     public String toString(){
         String str = n + " " + m + "\n";
-        for (int j = 0; j < n; j++){
+        for (int j = 0; j < func.length - 1; j++){
             str += func[j].toString() + " ";
         }
-        str += func[n].toString() + "\n";
+        str += func[func.length-1].toString() + "\n";
         for (int j = 0; j < n - 1; j++){
             str += colX[j] + " ";
         }
