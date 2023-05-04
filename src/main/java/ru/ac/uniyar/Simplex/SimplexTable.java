@@ -1,7 +1,10 @@
 package ru.ac.uniyar.Simplex;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class SimplexTable {
     private transient int n;
@@ -10,6 +13,7 @@ public class SimplexTable {
     private transient Fraction[][] table; // m, i - rows; n, j - columns
     private transient int[] colX;
     private transient int[] rowX;
+    static Logger log = Logger.getLogger(SimplexTable.class.getName());
 
     /**
      * Конструктор со всеми параметрами
@@ -58,6 +62,48 @@ public class SimplexTable {
         this.rowX = rowX.clone();
 
         normalize();
+    }
+
+    public SimplexTable(String fileName) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+            String[] data = reader.readLine().split(" ");
+            this.n = Integer.parseInt(data[0]);
+            this.m = Integer.parseInt(data[1]);
+            func = new Fraction[n+1];
+            table = new Fraction[m+1][n+1];
+            rowX = new int[m];
+            colX = new int[n];
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  <= n; j++){
+                func[j] = new Fraction(data[j]);
+            }
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  < n; j++){
+                colX[j] = Integer.parseInt(data[j]);
+            }
+            for (int i = 0; i < m; i++){
+                data = reader.readLine().split(" ");
+                rowX[i] = Integer.parseInt(data[0]);
+                for (int j = 0; j  <= n; j++){
+                    table[i][j] = new Fraction(data[j+1]);
+                }
+            }
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  <= n; j++){
+                table[m][j] = new Fraction(data[j]);
+            }
+        }catch (IOException e){
+            log.info(e.getMessage());
+        }
+    }
+
+    public void writeToFile(String fileName){
+        try( Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(fileName), StandardCharsets.UTF_8));) {
+            writer.write(this.toString());
+        }catch (IOException e){
+            log.info(e.getMessage());
+        }
     }
 
     public Fraction[][] getTable() {
@@ -186,8 +232,9 @@ public class SimplexTable {
             if (table[i][col].moreThen(Fraction.zero())) {
                 Fraction a = table[i][n].divide(table[i][col]);
                 Fraction b = table[row][n].divide(table[row][col]);
-                if (a.lessThen(b))
-                row = i;
+                if (a.lessThen(b) || b.lessThen(Fraction.zero())) {
+                    row = i;
+                }
             }
         }
         return row;
@@ -301,5 +348,30 @@ public class SimplexTable {
         result = 31 * result + Arrays.hashCode(colX);
         result = 31 * result + Arrays.hashCode(rowX);
         return result;
+    }
+
+    @Override
+    public String toString(){
+        String str = n + " " + m + "\n";
+        for (int j = 0; j < n; j++){
+            str += func[j].toString() + " ";
+        }
+        str += func[n].toString() + "\n";
+        for (int j = 0; j < n - 1; j++){
+            str += colX[j] + " ";
+        }
+        str += colX[n-1] + "\n";
+        for (int i = 0; i < m; i++){
+            str += rowX[i] + " ";
+            for (int j = 0; j < n; j++){
+                str += table[i][j] + " ";
+            }
+            str += table[i][n] + "\n";
+        }
+        for (int j = 0; j < n; j++){
+            str += table[m][j] + " ";
+        }
+        str += table[m][n] + "\n";
+        return str;
     }
 }

@@ -1,10 +1,16 @@
 package ru.ac.uniyar.Simplex;
 
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.logging.Logger;
+
 import static org.assertj.core.api.Assertions.*;
 
 public class SimplexTableTest {
-
+    static Logger log = Logger.getLogger(SimplexTableTest.class.getName());
 
     @Test
     public void normaliseTest(){
@@ -723,5 +729,42 @@ public class SimplexTableTest {
             simplexTable1.simplexStep();
         }
         assertThat(simplexTable1.getAnswer()).isEqualTo(simplexTable2.getAnswer());
+    }
+
+    @Test
+    public void fileTest(){
+        int n = 2;
+        int m = 2;
+        Fraction[] func = new Fraction[n + 1];
+        func[0] = new Fraction("1/2");
+        func[1] = new Fraction("1");
+        func[2] = new Fraction("0");
+        Fraction[][] table = new Fraction[m + 1][n + 1];
+        table[0][0] = new Fraction("1/3");
+        table[0][1] = new Fraction("1/3");
+        table[0][2] = new Fraction("1");
+        table[1][0] = new Fraction("2/3");
+        table[1][1] = new Fraction("-1/3");
+        table[1][2] = new Fraction("1");
+        table[2][0] = new Fraction("-1/3");
+        table[2][1] = new Fraction("-1/3");
+        table[2][2] = new Fraction("4");
+        int[] colX = new int[2];
+        colX[0] = 1;
+        colX[1] = 4;
+        int[] rowX = new int[2];
+        rowX[0] = 2;
+        rowX[1] = 3;
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        String file = "src/test/resources/test.txt";
+
+        simplexTable.writeToFile(file);
+        SimplexTable newSimplexTable = new SimplexTable(file);
+        assertThat(newSimplexTable).isEqualTo(simplexTable);
+        try{
+            Files.delete(Path.of(file));
+        }catch (IOException e){
+            log.info(e.getMessage());
+        }
     }
 }
