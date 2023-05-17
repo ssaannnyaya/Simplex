@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'pmd'
+    id 'org.openjfx.javafxplugin' version "0.0.14"
 }
 
 group 'ru.ac.uniyar'
@@ -20,6 +21,11 @@ jar {
 pmd{
     ruleSetFiles = files("${rootDir}/config/pmd/pmd-ruleset.xml")
     ruleSets = []
+}
+
+javafx {
+    version = 14
+    modules = ['javafx.controls', 'javafx.fxml']
 }
 
 repositories {

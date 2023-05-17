@@ -707,48 +707,48 @@ public class SimplexTableTest {
 
     @Test
     public void solvingTest2(){
-        int n1 = 5;
-        int m1 = 3;
-        Fraction[] func1 = new Fraction[n1 + 1];
-        func1[0] = new Fraction("-1");
-        func1[1] = new Fraction("-1");
-        func1[2] = new Fraction("-1");
-        func1[3] = new Fraction("-1");
-        func1[4] = new Fraction("-1");
-        func1[5] = new Fraction("0");
-        Fraction[][] table1 = new Fraction[m1 + 1][n1 + 1];
-        table1[0][0] = new Fraction("1");
-        table1[0][1] = new Fraction("1");
-        table1[0][2] = new Fraction("2");
-        table1[0][3] = new Fraction("0");
-        table1[0][4] = new Fraction("0");
-        table1[0][5] = new Fraction("6");
-        table1[1][0] = new Fraction("0");
-        table1[1][1] = new Fraction("2");
-        table1[1][2] = new Fraction("2");
-        table1[1][3] = new Fraction("-1");
-        table1[1][4] = new Fraction("1");
-        table1[1][5] = new Fraction("6");
-        table1[2][0] = new Fraction("1");
-        table1[2][1] = new Fraction("-1");
-        table1[2][2] = new Fraction("6");
-        table1[2][3] = new Fraction("1");
-        table1[2][4] = new Fraction("1");
-        table1[2][5] = new Fraction("12");
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1);
+        int n = 5;
+        int m = 3;
+        Fraction[] func = new Fraction[n + 1];
+        func[0] = new Fraction("-1");
+        func[1] = new Fraction("-1");
+        func[2] = new Fraction("-1");
+        func[3] = new Fraction("-1");
+        func[4] = new Fraction("-1");
+        func[5] = new Fraction("0");
+        Fraction[][] table = new Fraction[m + 1][n + 1];
+        table[0][0] = new Fraction("1");
+        table[0][1] = new Fraction("1");
+        table[0][2] = new Fraction("2");
+        table[0][3] = new Fraction("0");
+        table[0][4] = new Fraction("0");
+        table[0][5] = new Fraction("6");
+        table[1][0] = new Fraction("0");
+        table[1][1] = new Fraction("2");
+        table[1][2] = new Fraction("2");
+        table[1][3] = new Fraction("-1");
+        table[1][4] = new Fraction("1");
+        table[1][5] = new Fraction("6");
+        table[2][0] = new Fraction("1");
+        table[2][1] = new Fraction("-1");
+        table[2][2] = new Fraction("6");
+        table[2][3] = new Fraction("1");
+        table[2][4] = new Fraction("1");
+        table[2][5] = new Fraction("12");
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table);
 
-        while (!simplexTable1.isSolved() && simplexTable1.hasSolution() && simplexTable1.hasAdditionalVars()){
-            simplexTable1.simplexStep();
-            int additionalVarColumn = simplexTable1.findAdditionalVarColumn();
+        while (!simplexTable.isSolved() && simplexTable.hasSolution() && simplexTable.hasAdditionalVars()){
+            simplexTable.simplexStep();
+            int additionalVarColumn = simplexTable.findAdditionalVarColumn();
             if (additionalVarColumn != -1){
-                simplexTable1.removeCol(additionalVarColumn);
+                simplexTable.removeCol(additionalVarColumn);
             }
         }
-        simplexTable1.toMainTask();
-        while (!simplexTable1.isSolved() && simplexTable1.hasSolution()){
-            simplexTable1.simplexStep();
+        simplexTable.toMainTask();
+        while (!simplexTable.isSolved() && simplexTable.hasSolution()){
+            simplexTable.simplexStep();
         }
-        assertThat(simplexTable1.getAnswer()).isEqualTo(new Fraction("-24"));
+        assertThat(simplexTable.getAnswer()).isEqualTo(new Fraction("-24"));
     }
 
     @Test
@@ -787,4 +787,5 @@ public class SimplexTableTest {
             log.info(e.getMessage());
         }
     }
+
 }

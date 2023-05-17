@@ -64,8 +64,12 @@ public class SimplexTable {
         normalize();
     }
 
-    public SimplexTable(String fileName) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+    /**
+     * Создать симплекс-таблицу, считав информацию из файла
+     * @param filePath путь к файлу
+     */
+    public SimplexTable(String filePath) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))){
             String[] data = reader.readLine().split(" ");
             this.n = Integer.parseInt(data[0]);
             this.m = Integer.parseInt(data[1]);
@@ -97,17 +101,55 @@ public class SimplexTable {
         }
     }
 
-    public void writeToFile(String fileName){
+    /**
+     * Записать симплекс таблицу в файл
+     * @param filePath путь к файлу
+     */
+    public void writeToFile(String filePath){
         try( Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(fileName), StandardCharsets.UTF_8));) {
+                new FileOutputStream(filePath), StandardCharsets.UTF_8))) {
             writer.write(this.toString());
         }catch (IOException e){
             log.info(e.getMessage());
         }
     }
 
+    @Override
+    public SimplexTable clone(){
+        Fraction[][] newTable = new Fraction[m + 1][n + 1];     //копируем данные в новую таблицу без целевого столбца
+        for (int j = 0; j <= n; j++){
+            for (int i = 0; i <= m; i++){
+                newTable[i][j] = table[i][j];
+            }
+        }
+        return new SimplexTable(
+                n,
+                m,
+                func.clone(),
+                newTable,
+                colX.clone(),
+                rowX.clone()
+        );
+    }
+
     public Fraction[][] getTable() {
         return table.clone();
+    }
+
+    public int[] getColX() {
+        return colX;
+    }
+
+    public int[] getRowX() {
+        return rowX;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public int getM() {
+        return m;
     }
 
     /**
@@ -319,6 +361,10 @@ public class SimplexTable {
         table[m][n] = a.negative();
     }
 
+    /**
+     * Получение ответа на задачу линейного программирования
+     * @return Значение нижнего правого элемента умноженное на -1
+     */
     public Fraction getAnswer(){
         return table[m][n].negative();
     }
@@ -348,26 +394,26 @@ public class SimplexTable {
 
     @Override
     public String toString(){
-        String str = n + " " + m + "\n";
+        StringBuilder str = new StringBuilder(n + " " + m + "\n");
         for (int j = 0; j < func.length - 1; j++){
-            str += func[j].toString() + " ";
+            str.append(func[j].toString()).append(" ");
         }
-        str += func[func.length-1].toString() + "\n";
+        str.append(func[func.length - 1].toString()).append("\n");
         for (int j = 0; j < n - 1; j++){
-            str += colX[j] + " ";
+            str.append(colX[j]).append(" ");
         }
-        str += colX[n-1] + "\n";
+        str.append(colX[n - 1]).append("\n");
         for (int i = 0; i < m; i++){
-            str += rowX[i] + " ";
+            str.append(rowX[i]).append(" ");
             for (int j = 0; j < n; j++){
-                str += table[i][j] + " ";
+                str.append(table[i][j]).append(" ");
             }
-            str += table[i][n] + "\n";
+            str.append(table[i][n]).append("\n");
         }
         for (int j = 0; j < n; j++){
-            str += table[m][j] + " ";
+            str.append(table[m][j]).append(" ");
         }
-        str += table[m][n] + "\n";
-        return str;
+        str.append(table[m][n]).append("\n");
+        return str.toString();
     }
 }

@@ -22,16 +22,23 @@ public class Fraction {
 
     /**
      * Конструктор дроби из строки
-     * @param str Строка с формате "NUMERATOR/DENOMINATOR" или "INTEGER_NUMBER"
+     * @param str Строка в формате "NUMERATOR/DENOMINATOR" или "INTEGER_NUMBER" или "NUM.BER"
      * @throws NumberFormatException если в знаменателе ноль или если неверный формат строки
      */
-    public Fraction(String str){
-        String[] data = str.split("/");
-        this.num = Integer.parseInt(data[0]);
-        if(data.length > 1){                        //NOPMD
+    public Fraction(String str) {
+        if (str.contains("/")) {
+            String[] data = str.split("/");
+            this.num = Integer.parseInt(data[0]);
             this.denom = Integer.parseInt(data[1]);
-        }else {
-            this.denom = 1;
+        } else {
+            if (str.contains("\\.")) {
+                String[] data = str.split("\\.");
+                this.num = Integer.parseInt(data[0] + data[1]);
+                this.denom = (int) Math.pow(10, data[1].length());
+            } else {
+                this.num = Integer.parseInt(str);
+                this.denom = 1;
+            }
         }
         if (this.denom == 0)
             throw new NumberFormatException("Dividing by zero");
@@ -63,6 +70,10 @@ public class Fraction {
         }
     }
 
+    /**
+     * Домножает дробь на -1
+     * @return -FRACTION
+     */
     public Fraction negative(){
         return new Fraction(-num, denom);
     }
@@ -97,6 +108,14 @@ public class Fraction {
 
     public boolean lessThen(Fraction a){
         return (double) this.num / this.denom < (double) a.num / a.denom;
+    }
+
+    /**
+     * Переводит обычную дробь в десятичную
+     * @return числитель делённый на знаменатель
+     */
+    public double toDecimal() {
+        return ((double) num) / denom;
     }
 
     @Override
