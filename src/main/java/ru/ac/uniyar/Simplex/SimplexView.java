@@ -137,17 +137,29 @@ public class SimplexView {
         return pane;
     }
 
+    public boolean isFirstStep(){
+        return curStep == 0;
+    }
+
+    public boolean isLastStep(){
+        return simplexSteps.get(curStep).isSolved() || !simplexSteps.get(curStep).hasSolution();
+    }
+
+    public boolean isTimeToDoMainTusk(){
+        return simplexSteps.get(curStep - 1).hasAdditionalVars() && !simplexSteps.get(curStep).hasAdditionalVars();
+    }
+
     public void nextStep(){
         SimplexTable simplexTable = simplexSteps.get(curStep).clone();
         if (curStep != 0) {
-            if (simplexSteps.get(curStep - 1).hasAdditionalVars() && !simplexSteps.get(curStep).hasAdditionalVars()) {
+            if (isTimeToDoMainTusk()) {
                 simplexTable.toMainTask();
                 simplexSteps.add(simplexTable);
                 curStep++;
                 return;
             }
         }
-        if (simplexSteps.get(curStep).isSolved() || !simplexSteps.get(curStep).hasSolution()){
+        if (isLastStep()){
             return;
         }
         if (simplexSteps.get(curStep).hasAdditionalVars()) {

@@ -31,19 +31,6 @@ public class ApplicationView {
 
         root.setCenter(simplexView.getTable());
 
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.setPadding(new Insets(10));
-        root.setBottom(hBox);
-
-        Button prevStepButton = new Button("Previous step");
-        prevStepButton.setOnAction(event -> prevStep());
-        hBox.getChildren().add(prevStepButton);
-
-        Button nextStepButton = new Button("Next step");
-        nextStepButton.setOnAction(event -> nextStep());
-        hBox.getChildren().add(nextStepButton);
-
     }
 
     public BorderPane getRoot() {
@@ -60,6 +47,32 @@ public class ApplicationView {
         root.setCenter(simplexView.getTable());
     }
 
+    public void createButtonsPrevNext(){
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(10));
+        root.setBottom(hBox);
+
+        Button prevStepButton = new Button("Previous step");
+        Button nextStepButton = new Button("Next step");
+
+        prevStepButton.setDisable(simplexView.isFirstStep());
+        nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+
+        prevStepButton.setOnAction(event -> {
+            prevStep();
+            prevStepButton.setDisable(simplexView.isFirstStep());
+            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+        });
+        hBox.getChildren().add(prevStepButton);
+
+        nextStepButton.setOnAction(event -> {
+            nextStep();
+            prevStepButton.setDisable(simplexView.isFirstStep());
+            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+        });
+        hBox.getChildren().add(nextStepButton);
+    }
 
     public MenuItem createExitMenu(){
         MenuItem exit = new MenuItem("Exit");
@@ -71,9 +84,9 @@ public class ApplicationView {
 
 
     public MenuItem createFileReadingMenu(){
-        MenuItem exit = new MenuItem("Read from file");
+        MenuItem exit = new MenuItem("Load from file");
         exit.setOnAction((ActionEvent t) -> {
-            readFromFile();
+            loadFromFile();
         });
         return exit;
     }
@@ -86,7 +99,7 @@ public class ApplicationView {
         return exit;
     }
 
-    public void readFromFile(){
+    public void loadFromFile(){
         FileChooser fileChooser = new FileChooser();
         Stage fileStage = new Stage();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt"));
@@ -96,6 +109,7 @@ public class ApplicationView {
                 SimplexTable simplexTable = new SimplexTable(file.getPath());
                 simplexView = new SimplexView(simplexTable, true, false);
                 root.setCenter(simplexView.getTable());
+                createButtonsPrevNext();
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }

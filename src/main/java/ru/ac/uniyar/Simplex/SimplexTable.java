@@ -114,7 +114,6 @@ public class SimplexTable {
         }
     }
 
-    @Override
     public SimplexTable clone(){
         Fraction[][] newTable = new Fraction[m + 1][n + 1];     //копируем данные в новую таблицу без целевого столбца
         for (int j = 0; j <= n; j++){
