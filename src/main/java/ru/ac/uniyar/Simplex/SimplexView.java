@@ -16,6 +16,10 @@ public class SimplexView {
     private boolean isMinimisation;
     private boolean isDecimal;
 
+    public SimplexView(){
+        simplexSteps = new ArrayList<>();
+    }
+
     public SimplexView(SimplexTable task, boolean isMinimisation, boolean isDecimal){
         simplexSteps = new ArrayList<>();
         simplexSteps.add(task.clone());
@@ -24,7 +28,16 @@ public class SimplexView {
         this.isDecimal = isDecimal;
     }
 
+    public SimplexTable getProblem(){
+        return simplexSteps.get(0);
+    }
+
     public GridPane getTable(){
+        if (simplexSteps.isEmpty()) {
+            GridPane pane = new GridPane();
+            return pane;
+        }
+
         int high = 20;
         int width = 40;
 
