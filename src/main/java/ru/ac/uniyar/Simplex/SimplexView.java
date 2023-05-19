@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
@@ -32,10 +33,16 @@ public class SimplexView {
         return simplexSteps.get(0);
     }
 
+    public Text getFunction() {
+        if (simplexSteps.isEmpty()) {
+            return new Text("");
+        }
+        return new Text(simplexSteps.get(0).getFuncAsString());
+    }
+
     public GridPane getTable(){
         if (simplexSteps.isEmpty()) {
-            GridPane pane = new GridPane();
-            return pane;
+            return new GridPane();
         }
 
         int high = 20;

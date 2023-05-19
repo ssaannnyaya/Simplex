@@ -10,6 +10,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -29,7 +30,9 @@ public class ApplicationView {
         mainMenu.getItems().addAll(createExitMenu(), createFileReadingMenu(), createFileSavingMenu());
         root.setTop(menuBar);
 
-        root.setCenter(simplexView.getTable());
+        VBox center = new VBox();
+        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+        root.setCenter(center);
 
     }
 
@@ -39,12 +42,16 @@ public class ApplicationView {
 
     public void nextStep(){
         simplexView.nextStep();
-        root.setCenter(simplexView.getTable());
+        VBox center = new VBox();
+        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+        root.setCenter(center);
     }
 
     public void prevStep(){
         simplexView.prevStep();
-        root.setCenter(simplexView.getTable());
+        VBox center = new VBox();
+        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+        root.setCenter(center);
     }
 
     public void createButtonsPrevNext(){
@@ -108,7 +115,9 @@ public class ApplicationView {
             try {
                 SimplexTable simplexTable = new SimplexTable(file.getPath());
                 simplexView = new SimplexView(simplexTable, true, false);
-                root.setCenter(simplexView.getTable());
+                VBox center = new VBox();
+                center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+                root.setCenter(center);
                 createButtonsPrevNext();
             } catch (NumberFormatException e) {
                 e.printStackTrace();

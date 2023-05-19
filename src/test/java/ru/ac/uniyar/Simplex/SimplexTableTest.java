@@ -36,7 +36,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 3;
         rowX1[1] = 4;
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1, true);
 
         int n2 = 2;
         int m2 = 2;
@@ -60,7 +60,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 3;
         rowX2[1] = 4;
-        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2, true);
 
         simplexTable1.normalize();
         assertThat(simplexTable1).isEqualTo(simplexTable2);
@@ -90,7 +90,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.isSolved()).isTrue();
     }
 
@@ -118,7 +118,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.isSolved()).isTrue();
     }
 
@@ -146,7 +146,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.isSolved()).isFalse();
     }
 
@@ -174,7 +174,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.hasSolution()).isTrue();
     }
 
@@ -202,7 +202,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.hasSolution()).isFalse();
     }
 
@@ -230,7 +230,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 3;
         rowX1[1] = 4;
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1, true);
 
         int n2 = 2;
         int m2 = 2;
@@ -254,7 +254,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 3;
         rowX2[1] = 4;
-        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2, true);
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
     }
 
@@ -282,7 +282,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 3;
         rowX1[1] = 4;
-        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1, true);
 
         Fraction[][] table2 = new Fraction[m + 1][n + 1];
         table2[0][0] = new Fraction("-1/2");
@@ -300,7 +300,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 3;
         rowX2[1] = 1;
-        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2, true);
 
         simplexTable1.simplexStep(1, 0);
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
@@ -330,7 +330,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         int col = simplexTable.colForSimplexStep();
         assertThat(col).isEqualTo(0);
     }
@@ -359,7 +359,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 3;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         int col = simplexTable.colForSimplexStep();
         int row = simplexTable.rowForSimplexStep(col);
         assertThat(row).isEqualTo(1);
@@ -389,7 +389,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 3;
         rowX1[1] = 4;
-        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1, true);
 
         Fraction[][] table2 = new Fraction[m + 1][n + 1];
         table2[0][0] = new Fraction("-1/2");
@@ -407,7 +407,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 3;
         rowX2[1] = 1;
-        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2, true);
 
         simplexTable1.simplexStep();
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
@@ -428,7 +428,7 @@ public class SimplexTableTest {
         table1[1][0] = new Fraction("-1/2");
         table1[1][1] = new Fraction("2");
         table1[1][2] = new Fraction("1");
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1);
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, true);
 
         int n2 = 2;
         int m2 = 2;
@@ -452,7 +452,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = -3;
         rowX2[1] = -4;
-        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n2, m2, func2, table2, colX2, rowX2, true);
         assertThat(simplexTable1.equals(simplexTable2)).isTrue();
     }
 
@@ -480,7 +480,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 2;
         rowX[1] = -4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.hasAdditionalVars()).isTrue();
     }
 
@@ -508,7 +508,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 2;
         rowX[1] = 4;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.hasAdditionalVars()).isFalse();
     }
 
@@ -536,7 +536,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 2;
         rowX[1] = 3;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.findAdditionalVarColumn()).isEqualTo(1);
     }
 
@@ -564,7 +564,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 2;
         rowX[1] = 3;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         assertThat(simplexTable.findAdditionalVarColumn()).isEqualTo(-1);
     }
 
@@ -594,7 +594,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 2;
         rowX1[1] = 1;
-        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n, m, func, table1, colX1, rowX1, true);
 
         Fraction[][] table2 = new Fraction[m + 1][n + 1];
         table2[0][0] = new Fraction("1/2");
@@ -612,7 +612,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 2;
         rowX2[1] = 1;
-        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n, m, func, table2, colX2, rowX2, true);
 
         simplexTable1.toMainTask();
         assertThat(simplexTable1).isEqualTo(simplexTable2);
@@ -642,7 +642,7 @@ public class SimplexTableTest {
         int[] rowX1 = new int[2];
         rowX1[0] = 3;
         rowX1[1] = 4;
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1);
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, colX1, rowX1, true);
 
         int n2 = 2;
         int m2 = 2;
@@ -662,7 +662,7 @@ public class SimplexTableTest {
         int[] rowX2 = new int[2];
         rowX2[0] = 3;
         rowX2[1] = 4;
-        SimplexTable simplexTable2 = new SimplexTable(n2 - 1, m2, func2, table2, colX2, rowX2);
+        SimplexTable simplexTable2 = new SimplexTable(n2 - 1, m2, func2, table2, colX2, rowX2, true);
 
         simplexTable1.removeCol(1);
         assertThat(simplexTable1).isEqualTo(simplexTable2);
@@ -689,7 +689,7 @@ public class SimplexTableTest {
         table1[1][2] = new Fraction("3");
         table1[1][3] = new Fraction("-1");
         table1[1][4] = new Fraction("4");
-        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1);
+        SimplexTable simplexTable1 = new SimplexTable(n1, m1, func1, table1, true);
 
         while (!simplexTable1.isSolved() && simplexTable1.hasSolution() && simplexTable1.hasAdditionalVars()){
             simplexTable1.simplexStep();
@@ -735,7 +735,7 @@ public class SimplexTableTest {
         table[2][3] = new Fraction("1");
         table[2][4] = new Fraction("1");
         table[2][5] = new Fraction("12");
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, true);
 
         while (!simplexTable.isSolved() && simplexTable.hasSolution() && simplexTable.hasAdditionalVars()){
             simplexTable.simplexStep();
@@ -775,7 +775,7 @@ public class SimplexTableTest {
         int[] rowX = new int[2];
         rowX[0] = 2;
         rowX[1] = 3;
-        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX);
+        SimplexTable simplexTable = new SimplexTable(n, m, func, table, colX, rowX, true);
         String file = "src/test/resources/test.txt";
 
         simplexTable.writeToFile(file);

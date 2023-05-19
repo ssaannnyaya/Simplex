@@ -13,6 +13,7 @@ public class SimplexTable {
     private transient Fraction[][] table; // m, i - rows; n, j - columns
     private transient int[] colX;
     private transient int[] rowX;
+    boolean isMinimisation;
     static Logger log = Logger.getLogger(SimplexTable.class.getName());
 
     /**
@@ -23,14 +24,20 @@ public class SimplexTable {
      * @param table таблица ограничений
      * @param colX переменные в заголовках столбцов
      * @param rowX переменные в заголовках строк
+     * @param isMinimisation если true - задача минимизации, если false - максимизации
      */
-    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] colX, int[] rowX){
+    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] colX, int[] rowX, boolean isMinimisation){
         this.n = n;
         this.m = m;
-        this.func = func.clone();
+        Fraction[] newFunc = new Fraction[func.length];
+        for (int i = 0; i < func.length; i++) {
+            newFunc[i] = isMinimisation? func[i]: func[i].negative();
+        }
+        this.func = newFunc;
         this.table = table.clone();
         this.colX = colX.clone();
         this.rowX = rowX.clone();
+        this.isMinimisation = isMinimisation;
     }
 
     /**
@@ -43,8 +50,9 @@ public class SimplexTable {
      * @param m количество ограничений / количество строк
      * @param func целевая функция
      * @param table таблица ограничений
+     * @param isMinimisation если true - задача минимизации, если false - максимизации
      */
-    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table){
+    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, boolean isMinimisation){
         int[] colX = new int[n];
         int[] rowX = new int[m];
         for (int j = 0; j < n; j++){
@@ -56,11 +64,15 @@ public class SimplexTable {
 
         this.n = n;
         this.m = m;
-        this.func = func.clone();
+        Fraction[] newFunc = new Fraction[func.length];
+        for (int i = 0; i < func.length; i++) {
+            newFunc[i] = isMinimisation? func[i]: func[i].negative();
+        }
+        this.func = newFunc;
         this.table = table.clone();
         this.colX = colX.clone();
         this.rowX = rowX.clone();
-
+        this.isMinimisation = isMinimisation;
         normalize();
     }
 
@@ -73,13 +85,14 @@ public class SimplexTable {
             String[] data = reader.readLine().split(" ");
             this.n = Integer.parseInt(data[0]);
             this.m = Integer.parseInt(data[1]);
+            this.isMinimisation = Boolean.parseBoolean(data[2]);
             func = new Fraction[n+1];
             table = new Fraction[m+1][n+1];
             rowX = new int[m];
             colX = new int[n];
             data = reader.readLine().split(" ");
             for (int j = 0; j  <= n; j++){
-                func[j] = new Fraction(data[j]);
+                func[j] = isMinimisation? new Fraction(data[j]): new Fraction(data[j]).negative();
             }
             data = reader.readLine().split(" ");
             for (int j = 0; j  < n; j++){
@@ -127,12 +140,37 @@ public class SimplexTable {
                 func.clone(),
                 newTable,
                 colX.clone(),
-                rowX.clone()
+                rowX.clone(),
+                isMinimisation
         );
     }
 
     public Fraction[][] getTable() {
         return table.clone();
+    }
+
+    public String getFuncAsString() {
+        String str = "";
+        if (!func[0].equals(Fraction.zero())) {
+            str += func[0] + "x1";
+        }
+        for (int i = 1; i < func.length-1; i++) {
+            if (func[i].moreThen(Fraction.zero())) {
+                str += "+" + func[i] + "x" + (i+1);
+            }
+            if (func[i].lessThen(Fraction.zero())) {
+                str += func[i]+ "x" + (i+1);
+            }
+        }
+        if (func[n].moreThen(Fraction.zero())) {
+            str += "+" + func[func.length-1];
+        }
+        if (func[n].lessThen(Fraction.zero())) {
+            str += func[func.length-1];
+        }
+        str += "-->";
+        str += isMinimisation? "min": "max";
+        return str;
     }
 
     public int[] getColX() {
@@ -365,7 +403,7 @@ public class SimplexTable {
      * @return Значение нижнего правого элемента умноженное на -1
      */
     public Fraction getAnswer(){
-        return table[m][n].negative();
+        return isMinimisation? table[m][n].negative(): table[m][n];
     }
 
     @Override
@@ -393,7 +431,7 @@ public class SimplexTable {
 
     @Override
     public String toString(){
-        StringBuilder str = new StringBuilder(n + " " + m + "\n");
+        StringBuilder str = new StringBuilder(n + " " + m + " " + isMinimisation + "\n");
         for (int j = 0; j < func.length - 1; j++){
             str.append(func[j].toString()).append(" ");
         }
