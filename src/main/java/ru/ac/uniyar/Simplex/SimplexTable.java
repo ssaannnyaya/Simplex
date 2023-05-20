@@ -29,11 +29,7 @@ public class SimplexTable {
     public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] colX, int[] rowX, boolean isMinimisation){
         this.n = n;
         this.m = m;
-        Fraction[] newFunc = new Fraction[func.length];
-        for (int i = 0; i < func.length; i++) {
-            newFunc[i] = isMinimisation? func[i]: func[i].negative();
-        }
-        this.func = newFunc;
+        this.func = func.clone();
         this.table = table.clone();
         this.colX = colX.clone();
         this.rowX = rowX.clone();
@@ -64,11 +60,7 @@ public class SimplexTable {
 
         this.n = n;
         this.m = m;
-        Fraction[] newFunc = new Fraction[func.length];
-        for (int i = 0; i < func.length; i++) {
-            newFunc[i] = isMinimisation? func[i]: func[i].negative();
-        }
-        this.func = newFunc;
+        this.func = func.clone();
         this.table = table.clone();
         this.colX = colX.clone();
         this.rowX = rowX.clone();
@@ -92,7 +84,7 @@ public class SimplexTable {
             colX = new int[n];
             data = reader.readLine().split(" ");
             for (int j = 0; j  <= n; j++){
-                func[j] = isMinimisation? new Fraction(data[j]): new Fraction(data[j]).negative();
+                func[j] = new Fraction(data[j]);
             }
             data = reader.readLine().split(" ");
             for (int j = 0; j  < n; j++){
@@ -150,27 +142,27 @@ public class SimplexTable {
     }
 
     public String getFuncAsString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         if (!func[0].equals(Fraction.zero())) {
-            str += func[0] + "x1";
+            str.append(func[0]).append("x1");
         }
         for (int i = 1; i < func.length-1; i++) {
             if (func[i].moreThen(Fraction.zero())) {
-                str += "+" + func[i] + "x" + (i+1);
+                str.append("+").append(func[i]).append("x").append(i + 1);
             }
             if (func[i].lessThen(Fraction.zero())) {
-                str += func[i]+ "x" + (i+1);
+                str.append(func[i]).append("x").append(i + 1);
             }
         }
         if (func[n].moreThen(Fraction.zero())) {
-            str += "+" + func[func.length-1];
+            str.append("+").append(func[func.length - 1]);
         }
         if (func[n].lessThen(Fraction.zero())) {
-            str += func[func.length-1];
+            str.append(func[func.length - 1]);
         }
-        str += "-->";
-        str += isMinimisation? "min": "max";
-        return str;
+        str.append("-->");
+        str.append(isMinimisation ? "min" : "max");
+        return str.toString();
     }
 
     public int[] getColX() {
@@ -384,16 +376,20 @@ public class SimplexTable {
     public void toMainTask(){
         if (hasAdditionalVars())
             return;
-    for (int j = 0; j < n; j++){                                        //считаем значения в нижней строке для переменных в заглавии столбцов
-            Fraction a = func[colX[j] - 1];
+        Fraction[] newFunc = new Fraction[func.length];
+        for (int i = 0; i < func.length; i++) {
+            newFunc[i] = isMinimisation? func[i]: func[i].negative();
+        }
+        for (int j = 0; j < n; j++){                                        //считаем значения в нижней строке для переменных в заглавии столбцов
+            Fraction a = newFunc[colX[j] - 1];
             for (int i = 0; i < m; i++){
-                a = a.minus(func[rowX[i]-1].multiply(table[i][j]));
+                a = a.minus(newFunc[rowX[i]-1].multiply(table[i][j]));
             }
             table[m][j] = a;
         }
-        Fraction a = func[m + n];                                       //считаем значение в нижней левой ячейке
+        Fraction a = newFunc[m + n];                                       //считаем значение в нижней левой ячейке
         for (int i = 0; i < m; i++){
-            a = a.plus(func[rowX[i]-1].multiply(table[i][n]));
+            a = a.plus(newFunc[rowX[i]-1].multiply(table[i][n]));
         }
         table[m][n] = a.negative();
     }
