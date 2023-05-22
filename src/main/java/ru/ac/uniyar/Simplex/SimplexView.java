@@ -37,7 +37,7 @@ public class SimplexView {
         if (simplexSteps.isEmpty()) {
             return new Text("");
         }
-        return new Text(simplexSteps.get(0).getFuncAsString());
+        return new Text(getFuncAsString());
     }
 
     public GridPane getTable(){
@@ -45,8 +45,8 @@ public class SimplexView {
             return new GridPane();
         }
 
-        int high = 20;
-        int width = 40;
+        int high = 30;
+        int width = 60;
 
         GridPane pane = new GridPane();
 
@@ -129,7 +129,7 @@ public class SimplexView {
                 Rectangle rectangle = new Rectangle(width, high);
                 rectangle.setFill(Color.LIGHTGRAY);
 
-                Label cell = new Label((simplexSteps.get(curStep).getTable()[i][j]).toString());
+                Label cell = new Label(simplexSteps.get(curStep).getTable()[i][j].getFrString(isDecimal));
                 GridPane.setHalignment(cell, HPos.CENTER);
                 GridPane.setValignment(cell, VPos.CENTER);
 
@@ -189,6 +189,39 @@ public class SimplexView {
             simplexSteps.remove(curStep);
             curStep--;
         }
+    }
+
+    public void changeDecimal(){
+        isDecimal = !isDecimal;
+    }
+
+    public boolean isDecimal() {
+        return isDecimal;
+    }
+
+    public String getFuncAsString() {
+        StringBuilder str = new StringBuilder();
+        Fraction[] func = simplexSteps.get(0).getFunc();
+        if (!func[0].equals(Fraction.zero())) {
+            str.append(func[0].getFrString(isDecimal)).append("x1");
+        }
+        for (int i = 1; i < func.length-1; i++) {
+            if (func[i].moreThen(Fraction.zero())) {
+                str.append("+").append(func[i].getFrString(isDecimal)).append("x").append(i + 1);
+            }
+            if (func[i].lessThen(Fraction.zero())) {
+                str.append(func[i].getFrString(isDecimal)).append("x").append(i + 1);
+            }
+        }
+        if (func[func.length - 1].moreThen(Fraction.zero())) {
+            str.append("+").append(func[func.length - 1].getFrString(isDecimal));
+        }
+        if (func[func.length - 1].lessThen(Fraction.zero())) {
+            str.append(func[func.length - 1].getFrString(isDecimal));
+        }
+        str.append("-->");
+        str.append(isMinimisation ? "min" : "max");
+        return str.toString();
     }
 
 }

@@ -118,6 +118,10 @@ public class Fraction {
         return ((double) num) / denom;
     }
 
+    public String getFrString(boolean isDecimal) {
+        return isDecimal? String.valueOf(toDecimal()): toString();
+    }
+
     @Override
     public String toString(){
         return denom == 1 ? String.valueOf(num) : num + "/" + denom;

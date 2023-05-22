@@ -1,13 +1,9 @@
 package ru.ac.uniyar.Simplex;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,14 +21,17 @@ public class ApplicationView {
         root = new BorderPane();
 
         MenuBar menuBar = new MenuBar();
-        Menu mainMenu = new Menu("Menu");
+        Menu mainMenu = new Menu("File");
         menuBar.getMenus().add(mainMenu);
-        mainMenu.getItems().addAll(createExitMenu(), createFileReadingMenu(), createFileSavingMenu());
+        mainMenu.getItems().addAll(createFileReadingMenu(), createFileSavingMenu());
         root.setTop(menuBar);
 
         VBox center = new VBox();
         center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
         root.setCenter(center);
+
+        createDecimalButton();
+
 
     }
 
@@ -81,14 +80,18 @@ public class ApplicationView {
         hBox.getChildren().add(nextStepButton);
     }
 
-    public MenuItem createExitMenu(){
-        MenuItem exit = new MenuItem("Exit");
-        exit.setOnAction((ActionEvent t) -> {
-            Platform.exit();
+    public void createDecimalButton() {
+        Button decimalButton = new Button();
+        decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
+        decimalButton.setOnAction(event -> {
+            simplexView.changeDecimal();
+            decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
+            VBox center = new VBox();
+            center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+            root.setCenter(center);
         });
-        return exit;
+        root.setRight(decimalButton);
     }
-
 
     public MenuItem createFileReadingMenu(){
         MenuItem exit = new MenuItem("Load from file");
@@ -138,4 +141,6 @@ public class ApplicationView {
             }
         }
     }
+
+
 }

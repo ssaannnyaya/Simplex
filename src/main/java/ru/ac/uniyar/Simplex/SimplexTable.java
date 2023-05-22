@@ -141,28 +141,8 @@ public class SimplexTable {
         return table.clone();
     }
 
-    public String getFuncAsString() {
-        StringBuilder str = new StringBuilder();
-        if (!func[0].equals(Fraction.zero())) {
-            str.append(func[0]).append("x1");
-        }
-        for (int i = 1; i < func.length-1; i++) {
-            if (func[i].moreThen(Fraction.zero())) {
-                str.append("+").append(func[i]).append("x").append(i + 1);
-            }
-            if (func[i].lessThen(Fraction.zero())) {
-                str.append(func[i]).append("x").append(i + 1);
-            }
-        }
-        if (func[n].moreThen(Fraction.zero())) {
-            str.append("+").append(func[func.length - 1]);
-        }
-        if (func[n].lessThen(Fraction.zero())) {
-            str.append(func[func.length - 1]);
-        }
-        str.append("-->");
-        str.append(isMinimisation ? "min" : "max");
-        return str.toString();
+    public Fraction[] getFunc() {
+        return func;
     }
 
     public int[] getColX() {
