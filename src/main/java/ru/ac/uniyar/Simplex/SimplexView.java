@@ -14,18 +14,16 @@ import java.util.ArrayList;
 public class SimplexView {
     private ArrayList<SimplexTable> simplexSteps;
     private int curStep;
-    private boolean isMinimisation;
     private boolean isDecimal;
 
     public SimplexView(){
         simplexSteps = new ArrayList<>();
     }
 
-    public SimplexView(SimplexTable task, boolean isMinimisation, boolean isDecimal){
+    public SimplexView(SimplexTable task, boolean isDecimal){
         simplexSteps = new ArrayList<>();
         simplexSteps.add(task.clone());
         curStep = 0;
-        this.isMinimisation = isMinimisation;
         this.isDecimal = isDecimal;
     }
 
@@ -126,16 +124,12 @@ public class SimplexView {
 
         for (int j = 0; j <= simplexSteps.get(curStep).getN(); j++) {
             for (int i = 0; i <= simplexSteps.get(curStep).getM(); i++) {
-                Rectangle rectangle = new Rectangle(width, high);
-                rectangle.setFill(Color.LIGHTGRAY);
 
                 Label cell = new Label(simplexSteps.get(curStep).getTable()[i][j].getFrString(isDecimal));
                 GridPane.setHalignment(cell, HPos.CENTER);
                 GridPane.setValignment(cell, VPos.CENTER);
 
-                StackPane stack = new StackPane();
-                stack.getChildren().addAll(rectangle, cell);
-                pane.add(stack, j + 1, i + 1);
+                pane.add(cell, j + 1, i + 1);
             }
         }
 
@@ -220,7 +214,7 @@ public class SimplexView {
             str.append(func[func.length - 1].getFrString(isDecimal));
         }
         str.append("-->");
-        str.append(isMinimisation ? "min" : "max");
+        str.append(simplexSteps.get(0).isMinimisation ? "min" : "max");
         return str.toString();
     }
 

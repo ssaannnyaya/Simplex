@@ -119,7 +119,11 @@ public class Fraction {
     }
 
     public String getFrString(boolean isDecimal) {
-        return isDecimal? String.valueOf(toDecimal()): toString();
+        return isDecimal?
+                this.denom == 1 ?
+                        String.format("%d", num) :
+                        String.format("%.6s",toDecimal()) :
+                toString();
     }
 
     @Override

@@ -115,15 +115,23 @@ public class ApplicationView {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt"));
         File file = fileChooser.showOpenDialog(fileStage);
         if (file != null) {
-            try {
-                SimplexTable simplexTable = new SimplexTable(file.getPath());
-                simplexView = new SimplexView(simplexTable, true, false);
-                VBox center = new VBox();
-                center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-                root.setCenter(center);
-                createButtonsPrevNext();
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            if (SimplexTable.isOkFile(file.getPath())) {
+                try {
+                    SimplexTable simplexTable = new SimplexTable(file.getPath());
+                    simplexView = new SimplexView(simplexTable, false);
+                    VBox center = new VBox();
+                    center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
+                    root.setCenter(center);
+                    createButtonsPrevNext();
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid file");
+                alert.setHeaderText("Invalid file");
+                alert.setContentText("File not exists or has invalid format");
+                alert.showAndWait();
             }
         }
     }

@@ -429,4 +429,36 @@ public class SimplexTable {
         str.append(table[m][n]).append("\n");
         return str.toString();
     }
+
+    public static boolean isOkFile(String filePath) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String[] data = reader.readLine().split(" ");
+            int n = Integer.parseInt(data[0]);
+            int m = Integer.parseInt(data[1]);
+            Boolean.parseBoolean(data[2]);
+
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  <= n; j++){
+                new Fraction(data[j]);
+            }
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  < n; j++){
+                Integer.parseInt(data[j]);
+            }
+            for (int i = 0; i < m; i++){
+                data = reader.readLine().split(" ");
+                Integer.parseInt(data[0]);
+                for (int j = 0; j  <= n; j++){
+                    new Fraction(data[j+1]);
+                }
+            }
+            data = reader.readLine().split(" ");
+            for (int j = 0; j  <= n; j++){
+                new Fraction(data[j]);
+            }
+        }catch (IOException | NumberFormatException | ArrayIndexOutOfBoundsException e){
+            return false;
+        }
+        return true;
+    }
 }
