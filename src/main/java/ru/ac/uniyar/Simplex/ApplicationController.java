@@ -6,54 +6,62 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class ApplicationView {
+public class ApplicationController {
     private SimplexView simplexView;
+    private SimplexCreatingView simplexCreatingView;
     private BorderPane root;
+    private ScrollPane scrollPane;
 
-    public ApplicationView(){
+    public ApplicationController(){
         simplexView = new SimplexView();
+
         root = new BorderPane();
 
-        MenuBar menuBar = new MenuBar();
-        Menu mainMenu = new Menu("File");
-        menuBar.getMenus().add(mainMenu);
-        mainMenu.getItems().addAll(createFileReadingMenu(), createFileSavingMenu());
-        root.setTop(menuBar);
+        scrollPane = new ScrollPane();
+        scrollPane.setPadding(new Insets(15));
 
-        VBox center = new VBox();
-        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-        root.setCenter(center);
+        createMenus();
 
-        createDecimalButton();
+        root.setCenter(scrollPane);
 
+    }
 
+    public void clearPane() {
+        root.setBottom(null);
+        scrollPane.setContent(null);
+        root.setRight(null);
     }
 
     public BorderPane getRoot() {
         return root;
     }
 
+    public void showSimplex() {
+        clearPane();
+        if (simplexView.isEmpty()) {
+            return;
+        }
+        scrollPane.setContent(simplexView.getSolvingSteps());
+        createSolvingButtons();
+        createDecimalButton();
+    }
+
     public void nextStep(){
         simplexView.nextStep();
-        VBox center = new VBox();
-        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-        root.setCenter(center);
+        scrollPane.setContent(simplexView.getSolvingSteps());
     }
 
     public void prevStep(){
         simplexView.prevStep();
-        VBox center = new VBox();
-        center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-        root.setCenter(center);
+        scrollPane.setContent(simplexView.getSolvingSteps());
     }
 
-    public void createButtonsPrevNext(){
+    public void createSolvingButtons(){
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setPadding(new Insets(10));
@@ -61,23 +69,36 @@ public class ApplicationView {
 
         Button prevStepButton = new Button("Previous step");
         Button nextStepButton = new Button("Next step");
+        Button solveButton = new Button("Solve");
 
         prevStepButton.setDisable(simplexView.isFirstStep());
         nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+        solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
 
         prevStepButton.setOnAction(event -> {
             prevStep();
             prevStepButton.setDisable(simplexView.isFirstStep());
             nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
         });
-        hBox.getChildren().add(prevStepButton);
 
         nextStepButton.setOnAction(event -> {
             nextStep();
             prevStepButton.setDisable(simplexView.isFirstStep());
             nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
         });
-        hBox.getChildren().add(nextStepButton);
+
+        solveButton.setOnAction(event -> {
+            while (!simplexView.isLastStep() || simplexView.isTimeToDoMainTusk()) {
+                nextStep();
+            }
+            prevStepButton.setDisable(simplexView.isFirstStep());
+            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
+        });
+
+        hBox.getChildren().addAll(prevStepButton, nextStepButton, solveButton);
     }
 
     public void createDecimalButton() {
@@ -86,27 +107,79 @@ public class ApplicationView {
         decimalButton.setOnAction(event -> {
             simplexView.changeDecimal();
             decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
-            VBox center = new VBox();
-            center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-            root.setCenter(center);
+            scrollPane.setContent(simplexView.getSolvingSteps());
         });
         root.setRight(decimalButton);
     }
 
+    public void createMenus() {
+        MenuBar menuBar = new MenuBar();
+        Menu mainMenu = new Menu("File");
+        menuBar.getMenus().add(mainMenu);
+        mainMenu.getItems().addAll(createFileReadingMenu(), createFileSavingMenu(), createNewTuskMenu());
+        root.setTop(menuBar);
+    }
+
     public MenuItem createFileReadingMenu(){
-        MenuItem exit = new MenuItem("Load from file");
-        exit.setOnAction((ActionEvent t) -> {
+        MenuItem menuItem = new MenuItem("Load from file");
+        menuItem.setOnAction((ActionEvent t) -> {
             loadFromFile();
         });
-        return exit;
+        return menuItem;
     }
 
     public MenuItem createFileSavingMenu(){
-        MenuItem exit = new MenuItem("Save to file");
-        exit.setOnAction((ActionEvent t) -> {
+        MenuItem menuItem = new MenuItem("Save to file");
+        menuItem.setOnAction((ActionEvent t) -> {
             saveToFile();
         });
-        return exit;
+        return menuItem;
+    }
+
+    public MenuItem createNewTuskMenu() {
+        MenuItem menuItem = new MenuItem("New tusk");
+        menuItem.setOnAction((ActionEvent t) -> {
+            newTusk();
+        });
+        return menuItem;
+    }
+
+    public void newTusk() {
+        clearPane();
+        simplexCreatingView = new SimplexCreatingView();
+        scrollPane.setContent(simplexCreatingView.getPane());
+        createNewTuskButtons();
+    }
+
+    public void createNewTuskButtons(){
+        Button accept = new Button("accept");
+        accept.setOnAction(event -> {
+            newTuskAccept();
+        });
+
+        Button cancel = new Button("cancel");
+        cancel.setOnAction(event -> {
+            newTuskCancel();
+        });
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(cancel, accept);
+        hBox.setPadding(new Insets(10));
+
+        root.setBottom(hBox);
+    }
+
+    public void newTuskAccept() {
+        if (simplexCreatingView.isTableOk()) {
+            clearPane();
+            simplexView = simplexCreatingView.getTusk();
+            showSimplex();
+        }
+    }
+
+    public void newTuskCancel() {
+        clearPane();
+        showSimplex();
     }
 
     public void loadFromFile(){
@@ -119,10 +192,7 @@ public class ApplicationView {
                 try {
                     SimplexTable simplexTable = new SimplexTable(file.getPath());
                     simplexView = new SimplexView(simplexTable, false);
-                    VBox center = new VBox();
-                    center.getChildren().addAll(simplexView.getFunction(), simplexView.getTable());
-                    root.setCenter(center);
-                    createButtonsPrevNext();
+                    showSimplex();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }

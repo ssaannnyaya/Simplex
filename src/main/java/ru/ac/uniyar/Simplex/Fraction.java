@@ -24,15 +24,22 @@ public class Fraction {
      * Конструктор дроби из строки
      * @param str Строка в формате "NUMERATOR/DENOMINATOR" или "INTEGER_NUMBER" или "NUM.BER"
      * @throws NumberFormatException если в знаменателе ноль или если неверный формат строки
+     * @throws ArrayIndexOutOfBoundsException если неверный формат
      */
     public Fraction(String str) {
         if (str.contains("/")) {
             String[] data = str.split("/");
+            if (str.indexOf("/") != str.lastIndexOf("/")) {
+                throw new ArrayIndexOutOfBoundsException("Wrong fraction format");
+            }
             this.num = Integer.parseInt(data[0]);
             this.denom = Integer.parseInt(data[1]);
         } else {
-            if (str.contains("\\.")) {
+            if (str.contains(".")) {
                 String[] data = str.split("\\.");
+                if (str.indexOf(".") != str.lastIndexOf(".")) {
+                    throw new ArrayIndexOutOfBoundsException("Wrong fraction format");
+                }
                 this.num = Integer.parseInt(data[0] + data[1]);
                 this.denom = (int) Math.pow(10, data[1].length());
             } else {
