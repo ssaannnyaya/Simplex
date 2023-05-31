@@ -8,6 +8,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import ru.ac.uniyar.Simplex.Utils.Fraction;
+import ru.ac.uniyar.Simplex.Utils.SimplexTable;
 
 import java.util.ArrayList;
 
@@ -18,13 +20,6 @@ public class SimplexView {
     private int curRow;
     private int curCol;
     private boolean isDecimal;
-
-    public SimplexView(){
-        root = new VBox();
-        simplexSteps = new ArrayList<>();
-        curCol = -1;
-        curRow = -1;
-    }
 
     public SimplexView(SimplexTable task, boolean isDecimal){
         root = new VBox();
@@ -222,7 +217,7 @@ public class SimplexView {
             }
             root.getChildren().add(getTable(i));
         }
-        if (!isEmpty()) {
+        if (!isEmpty() && !isTimeToDoMainTusk()) {
             root.getChildren().add(new Text(simplexSteps.get(curStep).getAnswerAsString(isDecimal)));
         }
     }
@@ -240,7 +235,7 @@ public class SimplexView {
     }
 
     public boolean isTimeToDoMainTusk(){
-        return simplexSteps.get(curStep - 1).hasAdditionalVars() && !simplexSteps.get(curStep).hasAdditionalVars();
+        return curStep != 0 && simplexSteps.get(curStep - 1).hasAdditionalVars() && !simplexSteps.get(curStep).hasAdditionalVars();
     }
 
     public boolean isTimeToDoMainTusk(int step){
@@ -383,7 +378,7 @@ public class SimplexView {
             str.append(func[func.length - 1].getFrString(isDecimal));
         }
         str.append("-->");
-        str.append(simplexSteps.get(0).isMinimisation ? "min" : "max");
+        str.append(simplexSteps.get(0).isMinimisation() ? "min" : "max");
         return str.toString();
     }
 

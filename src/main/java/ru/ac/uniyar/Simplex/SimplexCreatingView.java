@@ -6,6 +6,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import ru.ac.uniyar.Simplex.Utils.Fraction;
+import ru.ac.uniyar.Simplex.Utils.SimplexTable;
+
+import java.util.ArrayList;
 
 public class SimplexCreatingView {
     private BorderPane root;
@@ -13,10 +17,23 @@ public class SimplexCreatingView {
     private Spinner<Integer> mSpinner;
     private TextField[] func;
     private TextField[][] table;
-    ToggleGroup minChooser;
-    RadioButton minButton;
-    RadioButton maxButton;
+    private GridPane topPane;
+    private GridPane centerPane;
+    private Text kindOfTusk;
+
+    private ToggleGroup minChooser;
+    private RadioButton minButton;
+    private RadioButton maxButton;
+
+    private ToggleGroup basisChooser;
+    private RadioButton artificialBasisButton;
+    private RadioButton givenBasisButton;
+
+    private ArrayList<CheckBox> varsCheckBoxes;
+    private VBox varsCheckBoxesBox;
+
     private boolean isMinimisation;
+    private boolean isGivenBasis;
 
     public SimplexCreatingView(){
         root = new BorderPane();
@@ -28,6 +45,7 @@ public class SimplexCreatingView {
         mSpinner.setEditable(true);
 
         isMinimisation = true;
+        isGivenBasis = false;
 
         createCenter();
         createTop();
@@ -42,49 +60,78 @@ public class SimplexCreatingView {
     }
 
     public void createTop() {
-        GridPane pane = new GridPane();
-        pane.getRowConstraints().add(new RowConstraints(30));
-        pane.getRowConstraints().add(new RowConstraints(30));
-        pane.getColumnConstraints().add(new ColumnConstraints(120));
-        pane.getColumnConstraints().add(new ColumnConstraints(60));
-        pane.getColumnConstraints().add(new ColumnConstraints(50));
-        pane.getColumnConstraints().add(new ColumnConstraints(100));
+        topPane = new GridPane();
+        topPane.getRowConstraints().add(new RowConstraints(30));
+        topPane.getRowConstraints().add(new RowConstraints(30));
+        topPane.getColumnConstraints().add(new ColumnConstraints(120));
+        topPane.getColumnConstraints().add(new ColumnConstraints(60));
+        topPane.getColumnConstraints().add(new ColumnConstraints(50));
+        topPane.getColumnConstraints().add(new ColumnConstraints(100));
+        topPane.getColumnConstraints().add(new ColumnConstraints(50));
+        topPane.getColumnConstraints().add(new ColumnConstraints(100));
         Text nText = new Text("Count of variables");
         Text mText = new Text("Count of restrictions");
 
-        pane.add(nText, 0, 0);
-        pane.add(nSpinner, 1, 0);
-        pane.add(mText, 0, 1);
-        pane.add(mSpinner, 1, 1);
+        topPane.add(nText, 0, 0);
+        topPane.add(nSpinner, 1, 0);
+        topPane.add(mText, 0, 1);
+        topPane.add(mSpinner, 1, 1);
 
         minChooser = new ToggleGroup();
+
         minButton = new RadioButton("minimisation");
         minButton.setOnAction(event -> {
             isMinimisation = true;
-            createCenter();
-            createTop();
+            centerPane.getChildren().remove(kindOfTusk);
+            kindOfTusk.setText("-> min");
+            centerPane.add(kindOfTusk, nSpinner.getValue() + 2, 1);
+
         });
         minButton.setSelected(isMinimisation);
 
         maxButton = new RadioButton("maximisation");
         maxButton.setOnAction(event -> {
             isMinimisation = false;
-            createCenter();
-            createTop();
+            centerPane.getChildren().remove(kindOfTusk);
+            kindOfTusk.setText("-> max");
+            centerPane.add(kindOfTusk, nSpinner.getValue() + 2, 1);
+
         });
         maxButton.setSelected(!isMinimisation);
 
         minButton.setToggleGroup(minChooser);
         maxButton.setToggleGroup(minChooser);
 
-        pane.add(minButton, 3, 0);
-        pane.add(maxButton, 3, 1);
+        topPane.add(minButton, 3, 0);
+        topPane.add(maxButton, 3, 1);
 
-        root.setTop(pane);
+        basisChooser = new ToggleGroup();
+
+        artificialBasisButton = new RadioButton("artificial basis");
+        artificialBasisButton.setOnAction(event -> {
+            isGivenBasis = false;
+            root.setRight(null);
+        });
+        artificialBasisButton.setSelected(!isGivenBasis);
+
+        givenBasisButton = new RadioButton("given basis");
+        givenBasisButton.setOnAction(event -> {
+            isGivenBasis = true;
+            createRight();
+        });
+        givenBasisButton.setSelected(isGivenBasis);
+
+        artificialBasisButton.setToggleGroup(basisChooser);
+        givenBasisButton.setToggleGroup(basisChooser);
+
+        topPane.add(artificialBasisButton, 5, 0);
+        topPane.add(givenBasisButton, 5, 1);
+
+        root.setTop(topPane);
     }
 
     public void createCenter() {
-        GridPane pane = new GridPane();
+        centerPane = new GridPane();
 
         func = new TextField[nSpinner.getValue() + 1];
         for (int i = 0; i <= nSpinner.getValue(); i++) {
@@ -112,44 +159,75 @@ public class SimplexCreatingView {
 
         for (int j = 0; j < nSpinner.getValue(); j++) {
             Text text = new Text("X" + (j + 1));
-            pane.add(text, j + 1, 0);
+            centerPane.add(text, j + 1, 0);
             GridPane.setHalignment(text, HPos.CENTER);
             GridPane.setValignment(text, VPos.BOTTOM);
 
-            pane.add(func[j], j + 1, 1);
-            pane.getColumnConstraints().add(new ColumnConstraints(width));
+            centerPane.add(func[j], j + 1, 1);
+            centerPane.getColumnConstraints().add(new ColumnConstraints(width));
         }
         {
             Text text = new Text("b");
-            pane.add(text, nSpinner.getValue() + 1, 0);
+            centerPane.add(text, nSpinner.getValue() + 1, 0);
             GridPane.setHalignment(text, HPos.CENTER);
             GridPane.setValignment(text, VPos.BOTTOM);
 
-            pane.add(func[nSpinner.getValue()], nSpinner.getValue() + 1, 1);
-            pane.getColumnConstraints().add(new ColumnConstraints(width));
+            centerPane.add(func[nSpinner.getValue()], nSpinner.getValue() + 1, 1);
+            centerPane.getColumnConstraints().add(new ColumnConstraints(width));
         }
         {
             Text text = new Text("f(x)");
-            pane.add(text, 0, 1);
+            centerPane.add(text, 0, 1);
             GridPane.setHalignment(text, HPos.RIGHT);
             GridPane.setValignment(text, VPos.CENTER);
-            pane.getColumnConstraints().add(new ColumnConstraints(width));
+            centerPane.getColumnConstraints().add(new ColumnConstraints(width));
         }
         {
-            Text text = new Text("-> " + (isMinimisation? "min" : "max"));
-            pane.add(text, nSpinner.getValue() + 2, 1);
-            GridPane.setHalignment(text, HPos.CENTER);
-            GridPane.setValignment(text, VPos.CENTER);
-            pane.getColumnConstraints().add(new ColumnConstraints(width));
+            kindOfTusk = new Text("-> " + (isMinimisation? "min" : "max"));
+            centerPane.add(kindOfTusk, nSpinner.getValue() + 2, 1);
+            GridPane.setHalignment(kindOfTusk, HPos.CENTER);
+            GridPane.setValignment(kindOfTusk, VPos.CENTER);
+            centerPane.getColumnConstraints().add(new ColumnConstraints(width));
         }
 
         for (int i = 0; i < mSpinner.getValue(); i++) {
-            pane.getRowConstraints().add(new RowConstraints(high));
+            centerPane.getRowConstraints().add(new RowConstraints(high));
             for (int j = 0; j <= nSpinner.getValue(); j++) {
-                pane.add(table[i][j], j + 1, i + 2);
+                centerPane.add(table[i][j], j + 1, i + 2);
             }
         }
-        root.setCenter(pane);
+        root.setCenter(centerPane);
+    }
+
+    public void createRight() {
+        varsCheckBoxes = new ArrayList<>();
+        varsCheckBoxesBox = new VBox();
+        varsCheckBoxesBox.setOnMouseEntered(event -> {
+            varsCheckBoxesBox.setBorder(Border.EMPTY);
+        });
+        for (int j = 0; j < nSpinner.getValue(); j++) {
+            CheckBox checkBox = new CheckBox("X" + (j + 1));
+            checkBox.setOnAction(event -> {
+                for (int i = 0; i < nSpinner.getValue(); i++) {
+                    if (!varsCheckBoxes.get(i).isSelected()) {
+                        varsCheckBoxes.get(i).setDisable(isAllVarsChosen());
+                    }
+                }
+            });
+            varsCheckBoxes.add(checkBox);
+            varsCheckBoxesBox.getChildren().add(checkBox);
+        }
+        root.setRight(varsCheckBoxesBox);
+    }
+
+    public boolean isAllVarsChosen() {
+        int count = 0;
+        for (int j = 0; j < nSpinner.getValue(); j++) {
+            if (varsCheckBoxes.get(j).isSelected()) {
+                count++;
+            }
+        }
+        return count == nSpinner.getValue() - mSpinner.getValue();
     }
 
     public boolean isTableOk() {
@@ -175,6 +253,11 @@ public class SimplexCreatingView {
             }
         }
 
+        if (isGivenBasis && !isAllVarsChosen()) {
+            isOk = false;
+            varsCheckBoxesBox.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(2), BorderWidths.DEFAULT)));
+        }
+
         return isOk;
     }
 
@@ -196,7 +279,20 @@ public class SimplexCreatingView {
                 fractionTable[i][j] = new Fraction(table[i][j].getText());
             }
         }
-        SimplexTable simplexTable = new SimplexTable(n, m, fractionFunc, fractionTable, isMinimisation);
+        SimplexTable simplexTable;
+        if (isGivenBasis) {
+            int[] vars = new int[nSpinner.getValue() - mSpinner.getValue()];
+            int var = 0;
+            for (int j = 0; j < nSpinner.getValue(); j++) {
+                if (varsCheckBoxes.get(j).isSelected()) {
+                    vars[var] = j + 1;
+                    var++;
+                }
+            }
+            simplexTable = new SimplexTable(n, m, fractionFunc, fractionTable, vars, isMinimisation);
+        } else {
+            simplexTable = new SimplexTable(n, m, fractionFunc, fractionTable, isMinimisation);
+        }
         return new SimplexView(simplexTable, false);
     }
 

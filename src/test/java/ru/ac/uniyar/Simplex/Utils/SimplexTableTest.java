@@ -1,4 +1,4 @@
-package ru.ac.uniyar.Simplex;
+package ru.ac.uniyar.Simplex.Utils;
 
 import org.junit.jupiter.api.Test;
 
@@ -787,5 +787,4 @@ public class SimplexTableTest {
             log.info(e.getMessage());
         }
     }
-
 }

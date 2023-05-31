@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import ru.ac.uniyar.Simplex.Utils.SimplexTable;
 
 import java.io.File;
 
@@ -18,8 +19,6 @@ public class ApplicationController {
     private ScrollPane scrollPane;
 
     public ApplicationController(){
-        simplexView = new SimplexView();
-
         root = new BorderPane();
 
         scrollPane = new ScrollPane();
@@ -219,6 +218,4 @@ public class ApplicationController {
             }
         }
     }
-
-
 }

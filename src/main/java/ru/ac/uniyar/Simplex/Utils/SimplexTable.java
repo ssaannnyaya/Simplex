@@ -1,4 +1,4 @@
-package ru.ac.uniyar.Simplex;
+package ru.ac.uniyar.Simplex.Utils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -69,6 +69,31 @@ public class SimplexTable {
         normalize();
     }
 
+    public SimplexTable(int n, int m, Fraction[] func, Fraction[][] table, int[] vars, boolean isMinimisation) {
+        this.n = n - m;
+        this.m = m;
+        this.func = func.clone();
+        Gauss gauss = new Gauss(n, m, table.clone());
+        gauss.calculateByVars(vars.clone());
+        this.table = gauss.getTableWithoutVars(vars.clone());
+        colX = new int[n - m];
+        rowX = new int[m];
+        int col = 0;
+        int row = 0;
+        for (int j = 1; j <= n; j++) {
+            int J = j;
+            if (Arrays.stream(vars).filter(it -> it == J).toArray().length != 0) {
+                rowX[row] = j;
+                row++;
+            } else {
+                colX[col] = j;
+                col++;
+            }
+        }
+        this.isMinimisation = isMinimisation;
+        toMainTask();
+    }
+
     /**
      * Создать симплекс-таблицу, считав информацию из файла
      * @param filePath путь к файлу
@@ -79,12 +104,13 @@ public class SimplexTable {
             this.n = Integer.parseInt(data[0]);
             this.m = Integer.parseInt(data[1]);
             this.isMinimisation = Boolean.parseBoolean(data[2]);
-            func = new Fraction[n+1];
+
             table = new Fraction[m+1][n+1];
             rowX = new int[m];
             colX = new int[n];
             data = reader.readLine().split(" ");
-            for (int j = 0; j  <= n; j++){
+            func = new Fraction[data.length];
+            for (int j = 0; j  < data.length; j++){
                 func[j] = new Fraction(data[j]);
             }
             data = reader.readLine().split(" ");
@@ -160,6 +186,10 @@ public class SimplexTable {
 
     public int getM() {
         return m;
+    }
+
+    public boolean isMinimisation() {
+        return isMinimisation;
     }
 
     /**
@@ -427,6 +457,7 @@ public class SimplexTable {
     }
 
     /**
+     * @param isDecimal Если true выводит дробные значения в десятичном виде, false - в виде обыкновенных дробей
      * @return Если задача решена выводит ответ в виде f(x1, ... xn) = a
      * Если задача не решена, но возможно продолжение, выводит пустую строку
      * Если в задаче остались дополнительные переменные выводит сообщение о том, что задача несовместна
@@ -519,8 +550,11 @@ public class SimplexTable {
             Boolean.parseBoolean(data[2]);
 
             data = reader.readLine().split(" ");
-            for (int j = 0; j  <= n; j++){
-                new Fraction(data[j]);
+            if (data.length < n || data.length > n + m + 1) {
+                return false;
+            }
+            for (String datum : data) {
+                new Fraction(datum);
             }
             data = reader.readLine().split(" ");
             for (int j = 0; j  < n; j++){
