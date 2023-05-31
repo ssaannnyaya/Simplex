@@ -2,6 +2,7 @@ package ru.ac.uniyar.Simplex;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -281,14 +282,57 @@ public class SimplexTable {
         int row = 0;
         for (int i = 0; i < m; i++){
             if (table[i][col].moreThen(Fraction.zero())) {
-                Fraction a = table[i][n].divide(table[i][col]);
-                Fraction b = table[row][n].divide(table[row][col]);
-                if (a.lessThen(b) || b.lessThen(Fraction.zero())) {
+                if (!table[row][col].moreThen(Fraction.zero())) {
                     row = i;
+                } else {
+                    Fraction a = table[i][n].divide(table[i][col]);
+                    Fraction b = table[row][n].divide(table[row][col]);
+                    if (a.lessThen(b) || b.lessThen(Fraction.zero())) {
+                        row = i;
+                    }
                 }
             }
         }
         return row;
+    }
+
+    /**
+     * Находит координаты всех возможных опорных элементов
+     * @return Список массивов, первый элемент массива - индекс сроки, второй - индекс столбца
+     */
+    public ArrayList<Integer[]> getPossibleElementsForStep() {
+        ArrayList<Integer[]> possibleElements = new ArrayList<>();
+        for (int j = 0; j < n; j++) {
+            if (table[m][j].lessThen(Fraction.zero())) {
+                int row = 0;
+                for (int i = 0; i < m; i++) {
+                    if (table[i][j].moreThen(Fraction.zero())) {
+                        if (!table[row][j].moreThen(Fraction.zero())) {
+                            row = i;
+                        } else {
+                            Fraction a = table[i][n].divide(table[i][j]);
+                            Fraction b = table[row][n].divide(table[row][j]);
+                            if (a.lessThen(b) || b.lessThen(Fraction.zero())) {
+                                row = i;
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < m; i++) {
+                    if (table[i][j].moreThen(Fraction.zero()) && table[row][j].moreThen(Fraction.zero())) {
+                        Integer[] element = new Integer[2];
+                        Fraction a = table[i][n].divide(table[i][j]);
+                        Fraction b = table[row][n].divide(table[row][j]);
+                        if (a.equals(b)) {
+                            element[0] = i;
+                            element[1] = j;
+                            possibleElements.add(element);
+                        }
+                    }
+                }
+            }
+        }
+        return possibleElements;
     }
 
     /**
@@ -382,6 +426,38 @@ public class SimplexTable {
         return isMinimisation? table[m][n].negative(): table[m][n];
     }
 
+    /**
+     * @return Если задача решена выводит ответ в виде f(x1, ... xn) = a
+     * Если задача не решена, но возможно продолжение, выводит пустую строку
+     * Если в задаче остались дополнительные переменные выводит сообщение о том, что задача несовместна
+     * Если дальнейшее решение невозможно, выводит сообщение о том, что функция неограниченна
+     */
+    public String getAnswerAsString(boolean isDecimal) {
+        if (!isSolved()) {
+            return "";
+        }
+        if (hasAdditionalVars()) {
+            return "The task is incompatible";
+        }
+        if (!hasSolution()) {
+            return "Function unlimited";
+        }
+        StringBuilder str = new StringBuilder("f(");
+        Fraction[] vars = new Fraction[n + m];
+        for (int j = 0; j < n; j++) {
+            vars[colX[j] - 1] = Fraction.zero();
+        }
+        for (int i = 0; i < m; i++) {
+            vars[rowX[i] -1] = table[i][n];
+        }
+        str.append(vars[0].getFrString(isDecimal));
+        for (int i = 1; i < n + m; i++) {
+            str.append(", ").append(vars[i].getFrString(isDecimal));
+        }
+        str.append(") = ").append(getAnswer());
+        return str.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -430,6 +506,11 @@ public class SimplexTable {
         return str.toString();
     }
 
+    /**
+     * Проверяет файл на соответствие формату хранения симплекс таблицы
+     * @param filePath Путь к проверяемому файлу
+     * @return true - если файл соответствует формату, false - иначе
+     */
     public static boolean isOkFile(String filePath) {
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath))){
             String[] data = reader.readLine().split(" ");
