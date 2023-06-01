@@ -485,7 +485,7 @@ public class SimplexTable {
         for (int i = 1; i < n + m; i++) {
             str.append(", ").append(vars[i].getFrString(isDecimal));
         }
-        str.append(") = ").append(getAnswer());
+        str.append(") = ").append(getAnswer().getFrString(isDecimal));
         return str.toString();
     }
 

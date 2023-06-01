@@ -6,8 +6,8 @@ import java.util.Objects;
  * Класс для работы с обыкновенными дробями и дробной арифметикой
  */
 public class Fraction {
-    private transient int num;
-    private transient int denom;
+    private transient long num;
+    private transient long denom;
 
     /**
      * Конструктор дроби из двух целых чисел
@@ -15,7 +15,7 @@ public class Fraction {
      * @param denom целочисленный знаменатель дроби
      * @throws NumberFormatException если в знаменателе ноль, возникает исключение "Dividing by zero"
      */
-    public Fraction(int num, int denom){
+    public Fraction(long num, long denom){
         if (denom == 0)
             throw new NumberFormatException("Dividing by zero");
         this.num = num;
@@ -35,18 +35,18 @@ public class Fraction {
             if (str.indexOf("/") != str.lastIndexOf("/")) {
                 throw new ArrayIndexOutOfBoundsException("Wrong fraction format");
             }
-            this.num = Integer.parseInt(data[0]);
-            this.denom = Integer.parseInt(data[1]);
+            this.num = Long.parseLong(data[0]);
+            this.denom = Long.parseLong(data[1]);
         } else {
             if (str.contains(".")) {
                 String[] data = str.split("\\.");
                 if (str.indexOf(".") != str.lastIndexOf(".")) {
                     throw new ArrayIndexOutOfBoundsException("Wrong fraction format");
                 }
-                this.num = Integer.parseInt(data[0] + data[1]);
-                this.denom = (int) Math.pow(10, data[1].length());
+                this.num = Long.parseLong(data[0] + data[1]);
+                this.denom = (long) Math.pow(10, data[1].length());
             } else {
-                this.num = Integer.parseInt(str);
+                this.num = Long.parseLong(str);
                 this.denom = 1;
             }
         }
@@ -77,7 +77,7 @@ public class Fraction {
      * @param b второе число
      * @return НОД(a,b)
      */
-    public int gcd(int a, int b){
+    public long gcd(long a, long b){
         return b==0 ? a : gcd(b, a % b);
     }
 
@@ -85,7 +85,7 @@ public class Fraction {
      * Сокращает дробь, если минус стоит в знаменателе, переносит его в числитель
      */
     public final void cut(){
-        int d = gcd(num, denom);
+        long d = gcd(num, denom);
         this.num /= d;
         this.denom /= d;
         if(this.denom < 0){

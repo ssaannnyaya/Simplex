@@ -4,11 +4,13 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import java.util.Locale;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Locale.setDefault(new Locale("ru", "RU"));
         primaryStage.setTitle("Simplex method");
 
         ApplicationController applicationController = new ApplicationController();

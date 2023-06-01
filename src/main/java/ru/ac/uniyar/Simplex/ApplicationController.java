@@ -113,7 +113,7 @@ public class ApplicationController {
 
     public void createMenus() {
         MenuBar menuBar = new MenuBar();
-        Menu mainMenu = new Menu("File");
+        Menu mainMenu = new Menu("Файл");
         menuBar.getMenus().add(mainMenu);
         mainMenu.getItems().addAll(createFileReadingMenu(), createFileSavingMenu(), createNewTuskMenu());
         root.setTop(menuBar);
@@ -206,6 +206,9 @@ public class ApplicationController {
     }
 
     public void saveToFile(){
+        if (simplexView == null || simplexView.isEmpty()) {
+            return;
+        }
         FileChooser fileChooser = new FileChooser();
         Stage fileStage = new Stage();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt"));
