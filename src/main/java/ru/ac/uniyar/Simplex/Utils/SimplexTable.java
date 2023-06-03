@@ -489,6 +489,51 @@ public class SimplexTable {
         return str.toString();
     }
 
+    public String getFuncAsString(boolean isDecimal) {
+        StringBuilder str = new StringBuilder();
+        if (!func[0].equals(Fraction.zero())) {
+            if (func[0].equals(Fraction.one().negative())) {
+                str.append("-");
+            } else {
+                if (!func[0].equals(Fraction.one())) {
+                    str.append(func[0].getFrString(isDecimal));
+                }
+            }
+            str.append("x").append("\u2081");
+        }
+        for (int i = 1; i < func.length-1; i++) {
+            if (func[i].moreThen(Fraction.zero())) {
+                if (!func[i-1].equals(Fraction.zero())) {
+                    str.append("+");
+                }
+                if (!func[i].equals(Fraction.one())) {
+                    str.append(func[i].getFrString(isDecimal));
+                }
+                str.append("x").append(i > 10 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
+            }
+            if (func[i].lessThen(Fraction.zero())) {
+                if (func[i].equals(Fraction.one().negative())) {
+                    str.append("-");
+                } else {
+                    str.append(func[i].getFrString(isDecimal));
+                }
+                str.append("x").append(i > 10 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
+            }
+        }
+        if (func[func.length - 1].moreThen(Fraction.zero())) {
+            if (func.length > 1 && !func[func.length-2].equals(Fraction.zero())) {
+                str.append("+");
+            }
+            str.append(func[func.length - 1].getFrString(isDecimal));
+        }
+        if (func[func.length - 1].lessThen(Fraction.zero())) {
+            str.append(func[func.length - 1].getFrString(isDecimal));
+        }
+        str.append(" --> ");
+        str.append(isMinimisation() ? "min" : "max");
+        return str.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -5,6 +5,7 @@ import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import ru.ac.uniyar.Simplex.Utils.Fraction;
 import ru.ac.uniyar.Simplex.Utils.SimplexTable;
@@ -158,7 +159,8 @@ public class SimplexCreatingView {
         int width = 60;
 
         for (int j = 0; j < nSpinner.getValue(); j++) {
-            Text text = new Text("X" + (j + 1));
+            Text text = new Text("x" + (j + 1 > 10 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
+            text.setFont(new Font(16));
             centerPane.add(text, j + 1, 0);
             GridPane.setHalignment(text, HPos.CENTER);
             GridPane.setValignment(text, VPos.BOTTOM);
@@ -168,6 +170,7 @@ public class SimplexCreatingView {
         }
         {
             Text text = new Text("b");
+            text.setFont(new Font(16));
             centerPane.add(text, nSpinner.getValue() + 1, 0);
             GridPane.setHalignment(text, HPos.CENTER);
             GridPane.setValignment(text, VPos.BOTTOM);
@@ -177,13 +180,15 @@ public class SimplexCreatingView {
         }
         {
             Text text = new Text("f(x)");
+            text.setFont(new Font(16));
             centerPane.add(text, 0, 1);
             GridPane.setHalignment(text, HPos.RIGHT);
             GridPane.setValignment(text, VPos.CENTER);
             centerPane.getColumnConstraints().add(new ColumnConstraints(width));
         }
         {
-            kindOfTusk = new Text("-> " + (isMinimisation? "min" : "max"));
+            kindOfTusk = new Text("--> " + (isMinimisation? "min" : "max"));
+            kindOfTusk.setFont(new Font(16));
             centerPane.add(kindOfTusk, nSpinner.getValue() + 2, 1);
             GridPane.setHalignment(kindOfTusk, HPos.CENTER);
             GridPane.setValignment(kindOfTusk, VPos.CENTER);
@@ -206,7 +211,8 @@ public class SimplexCreatingView {
             varsCheckBoxesBox.setBorder(Border.EMPTY);
         });
         for (int j = 0; j < nSpinner.getValue(); j++) {
-            CheckBox checkBox = new CheckBox("X" + (j + 1));
+            CheckBox checkBox = new CheckBox("x" + (j + 1 > 10 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
+            checkBox.setFont(new Font(16));
             checkBox.setOnAction(event -> {
                 for (int i = 0; i < nSpinner.getValue(); i++) {
                     if (!varsCheckBoxes.get(i).isSelected()) {
@@ -265,7 +271,7 @@ public class SimplexCreatingView {
         return root;
     }
 
-    public SimplexView getTusk() {
+    public SimplexTable getTusk() {
         int n = nSpinner.getValue();
         int m = mSpinner.getValue();
         Fraction[] fractionFunc = new Fraction[n + 1];
@@ -293,7 +299,7 @@ public class SimplexCreatingView {
         } else {
             simplexTable = new SimplexTable(n, m, fractionFunc, fractionTable, isMinimisation);
         }
-        return new SimplexView(simplexTable, false);
+        return simplexTable;
     }
 
     public void validate(TextField textField) {

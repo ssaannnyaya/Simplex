@@ -17,7 +17,7 @@ public class Main extends Application {
 
         BorderPane root = applicationController.getRoot();
 
-        Scene scene = new Scene(root, 720, 720);
+        Scene scene = new Scene(root, 1080, 860);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

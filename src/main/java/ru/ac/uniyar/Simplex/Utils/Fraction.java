@@ -177,6 +177,14 @@ public class Fraction {
     }
 
     /**
+     * Находит абсолютное значение(модуль) дроби, если она положительная, положительной и останется, если отрицательная, знак поменяется
+     * @return модуль дроби
+     */
+    public Fraction abs() {
+        return new Fraction(Math.abs(num), denom);
+    }
+
+    /**
      * Получить дробь в строковом виде
      * @param isDecimal если true - результат в десятичном виде, false - в виде обыкновенной дроби
      * @return строка, содержащая дробь
@@ -187,6 +195,14 @@ public class Fraction {
                         String.format("%d", num) :
                         String.format("%.6s",toDecimal()) :
                 toString();
+    }
+
+    /**
+     * Если числитель или знаменатель по модулю больше максимального значения int при дальнейших действиях может возникнуть переполнение
+     * @return true, если числитель или знаменатель больше Integer.MAX_VALUE, false, если оба меньше
+     */
+    public boolean isInDanger() {
+        return Math.abs(num) > Integer.MAX_VALUE || Math.abs(denom) > Integer.MAX_VALUE;
     }
 
     @Override

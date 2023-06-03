@@ -2,19 +2,22 @@ package ru.ac.uniyar.Simplex;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import ru.ac.uniyar.Simplex.Utils.Fraction;
 import ru.ac.uniyar.Simplex.Utils.SimplexTable;
-
 import java.util.ArrayList;
 
 public class SimplexView {
-    private VBox root;
+    private BorderPane root;
     private ArrayList<SimplexTable> simplexSteps;
     private int curStep;
     private int curRow;
@@ -22,14 +25,64 @@ public class SimplexView {
     private boolean isDecimal;
 
     public SimplexView(SimplexTable task, boolean isDecimal){
-        root = new VBox();
+        root = new BorderPane();
         simplexSteps = new ArrayList<>();
         simplexSteps.add(task.clone());
         curStep = 0;
         this.isDecimal = isDecimal;
         curCol = -1;
         curRow = -1;
-        fillSolvingSteps();
+
+        createCenter();
+        createSolvingButtons();
+    }
+
+    public BorderPane getPane() {
+        return root;
+    }
+
+    public void createCenter() {
+        root.setCenter(new ScrollPane(getSolvingSteps()));
+    }
+
+    public void createSolvingButtons(){
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(10));
+        root.setBottom(hBox);
+
+        Button prevStepButton = new Button("Previous step");
+        Button nextStepButton = new Button("Next step");
+        Button solveButton = new Button("Solve");
+
+        prevStepButton.setDisable(isFirstStep());
+        nextStepButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+        solveButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+
+        prevStepButton.setOnAction(event -> {
+            prevStep();
+            prevStepButton.setDisable(isFirstStep());
+            nextStepButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+            solveButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+        });
+
+        nextStepButton.setOnAction(event -> {
+            nextStep();
+            prevStepButton.setDisable(isFirstStep());
+            nextStepButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+            solveButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+        });
+
+        solveButton.setOnAction(event -> {
+            while (!isLastStep() || isTimeToDoMainTusk()) {
+                nextStep();
+            }
+            prevStepButton.setDisable(isFirstStep());
+            nextStepButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+            solveButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
+        });
+
+        hBox.getChildren().addAll(prevStepButton, nextStepButton, solveButton);
     }
 
     public SimplexTable getProblem(){
@@ -40,7 +93,9 @@ public class SimplexView {
         if (isEmpty()) {
             return new Text("");
         }
-        return new Text(getFuncAsString());
+        Text function = new Text(simplexSteps.get(0).getFuncAsString(isDecimal));
+        function.setFont(new Font(16));
+        return function;
     }
 
     public GridPane getTable(int step){
@@ -74,8 +129,10 @@ public class SimplexView {
 
             Rectangle rectangleHigh = new Rectangle(width, high);
             rectangleHigh.setFill(Color.LIGHTGRAY);
+            int x = Math.abs(tusk.getColX()[j]);
+            Label cellInHigh = new Label("x" + (x > 10 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
+            cellInHigh.setFont(new Font(16));
 
-            Label cellInHigh = new Label("x" + (tusk.getColX()[j]));
             GridPane.setHalignment(cellInHigh, HPos.CENTER);
             GridPane.setValignment(cellInHigh, VPos.CENTER);
 
@@ -105,7 +162,10 @@ public class SimplexView {
             Rectangle rectangleLeft = new Rectangle(width, high);
             rectangleLeft.setFill(Color.LIGHTGRAY);
 
-            Label cellInLeft = new Label("x" + (tusk.getRowX()[i]));
+            int x = Math.abs(tusk.getRowX()[i]);
+            Label cellInLeft = new Label("x" + (x > 10 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
+            cellInLeft.setFont(new Font(16));
+
             GridPane.setHalignment(cellInLeft, HPos.CENTER);
             GridPane.setValignment(cellInLeft, VPos.CENTER);
 
@@ -149,14 +209,14 @@ public class SimplexView {
                 rectangle.setOnMouseClicked(event -> {
                     curRow = element[0];
                     curCol = element[1];
-                    fillSolvingSteps();
+                    createCenter();
                 });
 
                 Label cellForStep = new Label(tusk.getTable()[rowForStep][colForStep].getFrString(isDecimal));
                 cellForStep.setOnMouseClicked(event -> {
                     curRow = element[0];
                     curCol = element[1];
-                    fillSolvingSteps();
+                    createCenter();
                 });
                 GridPane.setHalignment(cellForStep, HPos.CENTER);
                 GridPane.setValignment(cellForStep, VPos.CENTER);
@@ -208,22 +268,20 @@ public class SimplexView {
         return pane;
     }
 
-    public void fillSolvingSteps() {
-        root.getChildren().clear();
-        root.getChildren().add(getFunction());
+    public VBox getSolvingSteps() {
+        VBox solvingSteps = new VBox();
+        solvingSteps.getChildren().clear();
+        solvingSteps.getChildren().add(getFunction());
         for (int i = 0; i <= curStep; i++) {
             if (isTimeToDoMainTusk(i - 1)) {
-                root.getChildren().add(new Text("The basis is found, we pass to the main tusk"));
+                solvingSteps.getChildren().add(new Text("The basis is found, we pass to the main tusk"));
             }
-            root.getChildren().add(getTable(i));
+            solvingSteps.getChildren().add(getTable(i));
         }
         if (!isEmpty() && !isTimeToDoMainTusk()) {
-            root.getChildren().add(new Text(simplexSteps.get(curStep).getAnswerAsString(isDecimal)));
+            solvingSteps.getChildren().add(new Text(simplexSteps.get(curStep).getAnswerAsString(isDecimal)));
         }
-    }
-
-    public VBox getSolvingSteps() {
-        return root;
+        return solvingSteps;
     }
 
     public boolean isFirstStep(){
@@ -281,7 +339,7 @@ public class SimplexView {
                 curStep++;
                 curCol = -1;
                 curRow = -1;
-                fillSolvingSteps();
+                createCenter();
                 return;
             }
         }
@@ -302,7 +360,7 @@ public class SimplexView {
             curStep++;
             curCol = -1;
             curRow = -1;
-            fillSolvingSteps();
+            createCenter();
             return;
         }
         if (curCol != -1 && curRow != -1) {
@@ -314,7 +372,7 @@ public class SimplexView {
         curStep++;
         curCol = -1;
         curRow = -1;
-        fillSolvingSteps();
+        createCenter();
     }
 
     public void prevStep(){
@@ -323,63 +381,17 @@ public class SimplexView {
             curStep--;
             curCol = -1;
             curRow = -1;
-            fillSolvingSteps();
+            createCenter();
         }
     }
 
     public void changeDecimal(){
         isDecimal = !isDecimal;
-        fillSolvingSteps();
+        createCenter();
     }
 
     public boolean isDecimal() {
         return isDecimal;
-    }
-
-    public String getFuncAsString() {
-        StringBuilder str = new StringBuilder();
-        Fraction[] func = simplexSteps.get(0).getFunc();
-        if (!func[0].equals(Fraction.zero())) {
-            if (func[0].equals(Fraction.one().negative())) {
-                str.append("-");
-            } else {
-                if (!func[0].equals(Fraction.one())) {
-                    str.append(func[0].getFrString(isDecimal));
-                }
-            }
-            str.append("X1");
-        }
-        for (int i = 1; i < func.length-1; i++) {
-            if (func[i].moreThen(Fraction.zero())) {
-                if (!func[i-1].equals(Fraction.zero())) {
-                    str.append("+");
-                }
-                if (!func[i].equals(Fraction.one())) {
-                    str.append(func[i].getFrString(isDecimal));
-                }
-                str.append("X").append(i + 1);
-            }
-            if (func[i].lessThen(Fraction.zero())) {
-                if (func[i].equals(Fraction.one().negative())) {
-                    str.append("-");
-                } else {
-                    str.append(func[i].getFrString(isDecimal));
-                }
-                str.append("X").append(i + 1);
-            }
-        }
-        if (func[func.length - 1].moreThen(Fraction.zero())) {
-            if (func.length > 1 && !func[func.length-2].equals(Fraction.zero())) {
-                str.append("+");
-            }
-            str.append(func[func.length - 1].getFrString(isDecimal));
-        }
-        if (func[func.length - 1].lessThen(Fraction.zero())) {
-            str.append(func[func.length - 1].getFrString(isDecimal));
-        }
-        str.append("-->");
-        str.append(simplexSteps.get(0).isMinimisation() ? "min" : "max");
-        return str.toString();
     }
 
     public boolean isEmpty(){

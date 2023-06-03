@@ -2,7 +2,6 @@ package ru.ac.uniyar.Simplex;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -14,25 +13,19 @@ import java.io.File;
 
 public class ApplicationController {
     private SimplexView simplexView;
+    private GraphicMethodView graphicMethodView;
     private SimplexCreatingView simplexCreatingView;
     private BorderPane root;
-    private ScrollPane scrollPane;
 
     public ApplicationController(){
         root = new BorderPane();
 
-        scrollPane = new ScrollPane();
-        scrollPane.setPadding(new Insets(15));
-
         createMenus();
-
-        root.setCenter(scrollPane);
-
     }
 
     public void clearPane() {
         root.setBottom(null);
-        scrollPane.setContent(null);
+        root.setCenter(null);
         root.setRight(null);
     }
 
@@ -42,62 +35,22 @@ public class ApplicationController {
 
     public void showSimplex() {
         clearPane();
-        if (simplexView.isEmpty()) {
+        if (simplexView == null || simplexView.isEmpty()) {
             return;
         }
-        scrollPane.setContent(simplexView.getSolvingSteps());
-        createSolvingButtons();
+
+        TabPane simplexTabs = new TabPane();
+
+        Tab simplexTab = new Tab("Симплекс метод");
+        simplexTab.setContent(simplexView.getPane());
+
+        Tab graphicTab = new Tab("Графический метод");
+        graphicTab.setContent(graphicMethodView.getPane());
+
+        simplexTabs.getTabs().addAll(simplexTab, graphicTab);
+
+        root.setCenter(simplexTabs);
         createDecimalButton();
-    }
-
-    public void nextStep(){
-        simplexView.nextStep();
-        scrollPane.setContent(simplexView.getSolvingSteps());
-    }
-
-    public void prevStep(){
-        simplexView.prevStep();
-        scrollPane.setContent(simplexView.getSolvingSteps());
-    }
-
-    public void createSolvingButtons(){
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.setPadding(new Insets(10));
-        root.setBottom(hBox);
-
-        Button prevStepButton = new Button("Previous step");
-        Button nextStepButton = new Button("Next step");
-        Button solveButton = new Button("Solve");
-
-        prevStepButton.setDisable(simplexView.isFirstStep());
-        nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-        solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-
-        prevStepButton.setOnAction(event -> {
-            prevStep();
-            prevStepButton.setDisable(simplexView.isFirstStep());
-            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-        });
-
-        nextStepButton.setOnAction(event -> {
-            nextStep();
-            prevStepButton.setDisable(simplexView.isFirstStep());
-            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-        });
-
-        solveButton.setOnAction(event -> {
-            while (!simplexView.isLastStep() || simplexView.isTimeToDoMainTusk()) {
-                nextStep();
-            }
-            prevStepButton.setDisable(simplexView.isFirstStep());
-            nextStepButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-            solveButton.setDisable(simplexView.isLastStep() && !simplexView.isTimeToDoMainTusk());
-        });
-
-        hBox.getChildren().addAll(prevStepButton, nextStepButton, solveButton);
     }
 
     public void createDecimalButton() {
@@ -105,8 +58,9 @@ public class ApplicationController {
         decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
         decimalButton.setOnAction(event -> {
             simplexView.changeDecimal();
+            graphicMethodView.changeDecimal();
             decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
-            scrollPane.setContent(simplexView.getSolvingSteps());
+            showSimplex();
         });
         root.setRight(decimalButton);
     }
@@ -146,7 +100,7 @@ public class ApplicationController {
     public void newTusk() {
         clearPane();
         simplexCreatingView = new SimplexCreatingView();
-        scrollPane.setContent(simplexCreatingView.getPane());
+        root.setCenter(simplexCreatingView.getPane());
         createNewTuskButtons();
     }
 
@@ -171,7 +125,8 @@ public class ApplicationController {
     public void newTuskAccept() {
         if (simplexCreatingView.isTableOk()) {
             clearPane();
-            simplexView = simplexCreatingView.getTusk();
+            simplexView = new SimplexView(simplexCreatingView.getTusk(), false);
+            graphicMethodView = new GraphicMethodView(simplexCreatingView.getTusk(), false);
             showSimplex();
         }
     }
@@ -191,6 +146,7 @@ public class ApplicationController {
                 try {
                     SimplexTable simplexTable = new SimplexTable(file.getPath());
                     simplexView = new SimplexView(simplexTable, false);
+                    graphicMethodView = new GraphicMethodView(simplexTable, false);
                     showSimplex();
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
