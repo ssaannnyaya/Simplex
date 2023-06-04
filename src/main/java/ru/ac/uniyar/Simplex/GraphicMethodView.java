@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import ru.ac.uniyar.Simplex.Utils.Fraction;
@@ -27,7 +29,21 @@ public class GraphicMethodView {
         simplexSolution = simplexTable.clone();
         findSolution();
 
-        graphic = new Graphic(simplexTable.clone(), Fraction.zero(), Fraction.zero());
+        if (simplexSolution.getN() == 2) {
+            Fraction ansX1;
+            Fraction ansX2;
+            if (simplexSolution.isSolved() && simplexSolution.hasSolution() && !simplexSolution.hasAdditionalVars()) {
+                ansX1 = simplexSolution.getAnswerAsArray()[simplexTable.getColX()[0] - 1];
+                ansX2 = simplexSolution.getAnswerAsArray()[simplexTable.getColX()[1] - 1];
+            } else {
+                ansX1 = Fraction.zero();
+                ansX2 = Fraction.zero();
+            }
+            graphic = new Graphic(simplexTable.clone(),
+                    ansX1,
+                    ansX2,
+                    isDecimal);
+        }
 
         createRight();
         createCenter();
@@ -70,6 +86,7 @@ public class GraphicMethodView {
 
     public void createBottom() {
         HBox bottom = new HBox();
+        bottom.setPadding(new Insets(15));
         Button zoomIn = new Button("+");
         zoomIn.setOnAction(event -> {
             graphic.zoomIn();
@@ -89,6 +106,8 @@ public class GraphicMethodView {
     public void changeDecimal() {
         isDecimal = !isDecimal;
         createRight();
+        graphic.changeDecimal();
+        createCenter();
     }
 
     public VBox getFuncWithRestrictions() {
@@ -158,7 +177,13 @@ public class GraphicMethodView {
         funcText.setFont(new Font(16));
         vBox.getChildren().add(funcText);
 
-        vBox.getChildren().add(new Text("\nОграничения:"));
+        HBox restrictionsBox = new HBox();
+        restrictionsBox.setPadding(new Insets(10));
+        Text restrictionsText = new Text("Ограничения:");
+        Rectangle restrictionsRectangle = new Rectangle(15, 15);
+        restrictionsRectangle.setFill(Color.BLUE);
+        restrictionsBox.getChildren().addAll(restrictionsRectangle, restrictionsText);
+        vBox.getChildren().add(restrictionsBox);
 
         for (int i = 0; i < simplexTable.getM(); i++) {
             Fraction[] restrict = new Fraction[3];
@@ -169,7 +194,7 @@ public class GraphicMethodView {
                 restrict[0] = simplexTable.getTable()[i][1];
                 restrict[1] = simplexTable.getTable()[i][0];
             }
-            restrict[2] = simplexTable.getTable()[i][2].negative();
+            restrict[2] = simplexTable.getTable()[i][2];
             StringBuilder restrictStr = new StringBuilder();
             if (!restrict[0].equals(Fraction.zero())) {
                 if (restrict[0].equals(Fraction.one().negative())) {
@@ -207,19 +232,30 @@ public class GraphicMethodView {
             vBox.getChildren().add(restrictText);
         }
 
-        vBox.getChildren().add(new Text("\nВектор нормали:"));
+        HBox normalBox = new HBox();
+        normalBox.setPadding(new Insets(10));
+        Text normalText = new Text("Вектор нормали:");
+        Rectangle normalRectangle = new Rectangle(15, 15);
+        normalRectangle.setFill(Color.RED);
+        normalBox.getChildren().addAll(normalRectangle, normalText);
+        vBox.getChildren().add(normalBox);
+
         String normalStr = "n = (" +
                 simplexTable.getTable()[simplexTable.getM()][0].negative().getFrString(isDecimal) + "; " +
                 simplexTable.getTable()[simplexTable.getM()][1].negative().getFrString(isDecimal) + ")";
 
         vBox.getChildren().add(new Text(normalStr));
 
-        vBox.getChildren().add(new Text("\nОтвет:"));
+        HBox answerBox = new HBox();
+        answerBox.setPadding(new Insets(10));
+        Text answerText = new Text("Ответ:");
+        Rectangle answerRectangle = new Rectangle(15, 15);
+        answerRectangle.setFill(Color.GREEN);
+        answerBox.getChildren().addAll(answerRectangle, answerText);
+        vBox.getChildren().add(answerBox);
         vBox.getChildren().add(new Text(simplexSolution.getAnswerAsString(isDecimal)));
 
         return vBox;
     }
-
-
 
 }

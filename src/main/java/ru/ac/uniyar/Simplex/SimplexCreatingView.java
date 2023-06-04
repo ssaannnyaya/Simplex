@@ -70,8 +70,8 @@ public class SimplexCreatingView {
         topPane.getColumnConstraints().add(new ColumnConstraints(100));
         topPane.getColumnConstraints().add(new ColumnConstraints(50));
         topPane.getColumnConstraints().add(new ColumnConstraints(100));
-        Text nText = new Text("Count of variables");
-        Text mText = new Text("Count of restrictions");
+        Text nText = new Text("Количество переменных");
+        Text mText = new Text("Количество ограничений");
 
         topPane.add(nText, 0, 0);
         topPane.add(nSpinner, 1, 0);
@@ -80,7 +80,7 @@ public class SimplexCreatingView {
 
         minChooser = new ToggleGroup();
 
-        minButton = new RadioButton("minimisation");
+        minButton = new RadioButton("Задача минимизации");
         minButton.setOnAction(event -> {
             isMinimisation = true;
             centerPane.getChildren().remove(kindOfTusk);
@@ -90,7 +90,7 @@ public class SimplexCreatingView {
         });
         minButton.setSelected(isMinimisation);
 
-        maxButton = new RadioButton("maximisation");
+        maxButton = new RadioButton("Задача максимизации");
         maxButton.setOnAction(event -> {
             isMinimisation = false;
             centerPane.getChildren().remove(kindOfTusk);
@@ -108,14 +108,14 @@ public class SimplexCreatingView {
 
         basisChooser = new ToggleGroup();
 
-        artificialBasisButton = new RadioButton("artificial basis");
+        artificialBasisButton = new RadioButton("Метод искусственного базиса");
         artificialBasisButton.setOnAction(event -> {
             isGivenBasis = false;
             root.setRight(null);
         });
         artificialBasisButton.setSelected(!isGivenBasis);
 
-        givenBasisButton = new RadioButton("given basis");
+        givenBasisButton = new RadioButton("Введённый базис");
         givenBasisButton.setOnAction(event -> {
             isGivenBasis = true;
             createRight();

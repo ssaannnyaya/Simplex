@@ -16,6 +16,9 @@ public class ApplicationController {
     private GraphicMethodView graphicMethodView;
     private SimplexCreatingView simplexCreatingView;
     private BorderPane root;
+    private TabPane simplexTabs;
+    private Tab simplexTab;
+    private Tab graphicTab;
 
     public ApplicationController(){
         root = new BorderPane();
@@ -34,32 +37,32 @@ public class ApplicationController {
     }
 
     public void showSimplex() {
-        clearPane();
-        if (simplexView == null || simplexView.isEmpty()) {
-            return;
+        if (root.getCenter() == null || !root.getCenter().equals(simplexTabs)) {
+            clearPane();
+            if (simplexView == null || simplexView.isEmpty()) {
+                return;
+            }
+            simplexTabs = new TabPane();
+            simplexTab = new Tab("Симплекс метод");
+            graphicTab = new Tab("Графический метод");
+            simplexTabs.getTabs().addAll(simplexTab, graphicTab);
+            root.setCenter(simplexTabs);
         }
 
-        TabPane simplexTabs = new TabPane();
-
-        Tab simplexTab = new Tab("Симплекс метод");
         simplexTab.setContent(simplexView.getPane());
 
-        Tab graphicTab = new Tab("Графический метод");
         graphicTab.setContent(graphicMethodView.getPane());
 
-        simplexTabs.getTabs().addAll(simplexTab, graphicTab);
-
-        root.setCenter(simplexTabs);
         createDecimalButton();
     }
 
     public void createDecimalButton() {
         Button decimalButton = new Button();
-        decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
+        decimalButton.setText(simplexView.isDecimal()? "Обыкновенные дроби": "Десятичные дроби");
         decimalButton.setOnAction(event -> {
             simplexView.changeDecimal();
             graphicMethodView.changeDecimal();
-            decimalButton.setText(simplexView.isDecimal()? "Normal fractions": "Decimal fractions");
+            decimalButton.setText(simplexView.isDecimal()? "Обыкновенные дроби": "Десятичные дроби");
             showSimplex();
         });
         root.setRight(decimalButton);
@@ -74,7 +77,7 @@ public class ApplicationController {
     }
 
     public MenuItem createFileReadingMenu(){
-        MenuItem menuItem = new MenuItem("Load from file");
+        MenuItem menuItem = new MenuItem("Загрузить");
         menuItem.setOnAction((ActionEvent t) -> {
             loadFromFile();
         });
@@ -82,7 +85,7 @@ public class ApplicationController {
     }
 
     public MenuItem createFileSavingMenu(){
-        MenuItem menuItem = new MenuItem("Save to file");
+        MenuItem menuItem = new MenuItem("Сохранить");
         menuItem.setOnAction((ActionEvent t) -> {
             saveToFile();
         });
@@ -90,7 +93,7 @@ public class ApplicationController {
     }
 
     public MenuItem createNewTuskMenu() {
-        MenuItem menuItem = new MenuItem("New tusk");
+        MenuItem menuItem = new MenuItem("Новая задача");
         menuItem.setOnAction((ActionEvent t) -> {
             newTusk();
         });
@@ -105,12 +108,12 @@ public class ApplicationController {
     }
 
     public void createNewTuskButtons(){
-        Button accept = new Button("accept");
+        Button accept = new Button("Принять");
         accept.setOnAction(event -> {
             newTuskAccept();
         });
 
-        Button cancel = new Button("cancel");
+        Button cancel = new Button("Отмена");
         cancel.setOnAction(event -> {
             newTuskCancel();
         });
@@ -154,8 +157,8 @@ public class ApplicationController {
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid file");
-                alert.setHeaderText("Invalid file");
-                alert.setContentText("File not exists or has invalid format");
+                alert.setHeaderText("Неверный файл");
+                alert.setContentText("Файл не существует или имеет неверный формат");
                 alert.showAndWait();
             }
         }

@@ -468,25 +468,33 @@ public class SimplexTable {
             return "";
         }
         if (hasAdditionalVars()) {
-            return "The task is incompatible";
+            return "Задача несовместна";
         }
         if (!hasSolution()) {
-            return "Function unlimited";
+            return "Функция неограниченна";
         }
         StringBuilder str = new StringBuilder("f(");
-        Fraction[] vars = new Fraction[n + m];
-        for (int j = 0; j < n; j++) {
-            vars[colX[j] - 1] = Fraction.zero();
-        }
-        for (int i = 0; i < m; i++) {
-            vars[rowX[i] -1] = table[i][n];
-        }
+        Fraction[] vars = getAnswerAsArray();
         str.append(vars[0].getFrString(isDecimal));
         for (int i = 1; i < n + m; i++) {
             str.append(", ").append(vars[i].getFrString(isDecimal));
         }
         str.append(") = ").append(getAnswer().getFrString(isDecimal));
         return str.toString();
+    }
+
+    public Fraction[] getAnswerAsArray() {
+        if (!isSolved() || hasAdditionalVars() || !hasSolution()) {
+            return new Fraction[0];
+        }
+        Fraction[] answer = new Fraction[n + m];
+        for (int j = 0; j < n; j++) {
+            answer[colX[j] - 1] = Fraction.zero();
+        }
+        for (int i = 0; i < m; i++) {
+            answer[rowX[i] -1] = table[i][n];
+        }
+        return answer;
     }
 
     public String getFuncAsString(boolean isDecimal) {

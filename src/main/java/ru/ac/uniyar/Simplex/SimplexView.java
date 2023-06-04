@@ -51,9 +51,9 @@ public class SimplexView {
         hBox.setPadding(new Insets(10));
         root.setBottom(hBox);
 
-        Button prevStepButton = new Button("Previous step");
-        Button nextStepButton = new Button("Next step");
-        Button solveButton = new Button("Solve");
+        Button prevStepButton = new Button("Предыдущий шаг");
+        Button nextStepButton = new Button("Следующий шаг");
+        Button solveButton = new Button("Решить");
 
         prevStepButton.setDisable(isFirstStep());
         nextStepButton.setDisable(isLastStep() && !isTimeToDoMainTusk());
@@ -274,7 +274,7 @@ public class SimplexView {
         solvingSteps.getChildren().add(getFunction());
         for (int i = 0; i <= curStep; i++) {
             if (isTimeToDoMainTusk(i - 1)) {
-                solvingSteps.getChildren().add(new Text("The basis is found, we pass to the main tusk"));
+                solvingSteps.getChildren().add(new Text("Базис найден, переходим к основной задаче"));
             }
             solvingSteps.getChildren().add(getTable(i));
         }
