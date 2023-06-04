@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import ru.ac.uniyar.Simplex.Utils.Fraction;
 import ru.ac.uniyar.Simplex.Utils.SimplexTable;
 import java.util.ArrayList;
 

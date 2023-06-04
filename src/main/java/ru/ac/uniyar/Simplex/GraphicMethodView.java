@@ -14,11 +14,11 @@ import ru.ac.uniyar.Simplex.Utils.Graphic;
 import ru.ac.uniyar.Simplex.Utils.SimplexTable;
 
 public class GraphicMethodView {
-    private BorderPane root;
-    private SimplexTable simplexTable;
-    private SimplexTable simplexSolution;
-    private Graphic graphic;
-    private boolean isDecimal;
+    private transient final BorderPane root;
+    private transient final SimplexTable simplexTable;
+    private transient final SimplexTable simplexSolution;
+    private transient Graphic graphic;
+    private transient boolean isDecimal;
 
     public GraphicMethodView(SimplexTable simplexTable, boolean isDecimal) {
         root = new BorderPane();

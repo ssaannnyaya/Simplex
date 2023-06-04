@@ -15,17 +15,16 @@ import java.io.File;
 import java.io.IOException;
 
 public class ApplicationController {
-    private SimplexView simplexView;
-    private GraphicMethodView graphicMethodView;
-    private SimplexCreatingView simplexCreatingView;
-    private BorderPane root;
-    private TabPane simplexTabs;
-    private Tab simplexTab;
-    private Tab graphicTab;
+    private transient SimplexView simplexView;
+    private transient GraphicMethodView graphicMethodView;
+    private transient SimplexCreatingView simplexCreatingView;
+    private final BorderPane root;
+    private transient TabPane simplexTabs;
+    private transient Tab simplexTab;
+    private transient Tab graphicTab;
 
     public ApplicationController(){
         root = new BorderPane();
-
         createMenus();
     }
 
@@ -178,14 +177,10 @@ public class ApplicationController {
         File file = fileChooser.showOpenDialog(fileStage);
         if (file != null) {
             if (SimplexTable.isOkFile(file.getPath())) {
-                try {
-                    SimplexTable simplexTable = new SimplexTable(file.getPath());
-                    simplexView = new SimplexView(simplexTable, false);
-                    graphicMethodView = new GraphicMethodView(simplexTable, false);
-                    showSimplex();
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
+                SimplexTable simplexTable = new SimplexTable(file.getPath());
+                simplexView = new SimplexView(simplexTable, false);
+                graphicMethodView = new GraphicMethodView(simplexTable, false);
+                showSimplex();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid file");
@@ -205,11 +200,7 @@ public class ApplicationController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt"));
         File file = fileChooser.showSaveDialog(fileStage);
         if (file != null) {
-            try {
-                simplexView.getProblem().writeToFile(file.getPath());
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+            simplexView.getProblem().writeToFile(file.getPath());
         }
     }
 }
