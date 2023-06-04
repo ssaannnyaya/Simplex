@@ -1,15 +1,18 @@
 package ru.ac.uniyar.Simplex;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ru.ac.uniyar.Simplex.Utils.SimplexTable;
-
 import java.io.File;
+import java.io.IOException;
 
 public class ApplicationController {
     private SimplexView simplexView;
@@ -44,7 +47,9 @@ public class ApplicationController {
             }
             simplexTabs = new TabPane();
             simplexTab = new Tab("Симплекс метод");
+            simplexTab.setClosable(false);
             graphicTab = new Tab("Графический метод");
+            graphicTab.setClosable(false);
             simplexTabs.getTabs().addAll(simplexTab, graphicTab);
             root.setCenter(simplexTabs);
         }
@@ -73,6 +78,13 @@ public class ApplicationController {
         Menu mainMenu = new Menu("Файл");
         menuBar.getMenus().add(mainMenu);
         mainMenu.getItems().addAll(createFileReadingMenu(), createFileSavingMenu(), createNewTuskMenu());
+        Menu helpMenu = new Menu("Справка");
+        MenuItem helpItem = new MenuItem("Справка");
+        helpItem.setOnAction(event -> {
+            showHelp();
+        });
+        helpMenu.getItems().add(helpItem);
+        menuBar.getMenus().add(helpMenu);
         root.setTop(menuBar);
     }
 
@@ -98,6 +110,26 @@ public class ApplicationController {
             newTusk();
         });
         return menuItem;
+    }
+
+    public void showHelp() {
+        try {
+            Stage helpStage = new Stage();
+            helpStage.setTitle("Справка");
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("Help.fxml"));
+            Parent parent = loader.load();
+            Scene scene = new Scene(parent);
+            helpStage.setScene(scene);
+            helpStage.showAndWait();
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("File not found");
+            alert.setHeaderText("Файл не найден");
+            alert.setContentText("Не обнаружен файл со справкой");
+            alert.showAndWait();
+        }
+
     }
 
     public void newTusk() {

@@ -1,6 +1,8 @@
 package ru.ac.uniyar.Simplex;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -62,14 +64,15 @@ public class SimplexCreatingView {
 
     public void createTop() {
         topPane = new GridPane();
+        topPane.setPadding(new Insets(10));
         topPane.getRowConstraints().add(new RowConstraints(30));
         topPane.getRowConstraints().add(new RowConstraints(30));
-        topPane.getColumnConstraints().add(new ColumnConstraints(120));
+        topPane.getColumnConstraints().add(new ColumnConstraints(160));
         topPane.getColumnConstraints().add(new ColumnConstraints(60));
-        topPane.getColumnConstraints().add(new ColumnConstraints(50));
-        topPane.getColumnConstraints().add(new ColumnConstraints(100));
-        topPane.getColumnConstraints().add(new ColumnConstraints(50));
-        topPane.getColumnConstraints().add(new ColumnConstraints(100));
+        topPane.getColumnConstraints().add(new ColumnConstraints(35));
+        topPane.getColumnConstraints().add(new ColumnConstraints(160));
+        topPane.getColumnConstraints().add(new ColumnConstraints(35));
+        topPane.getColumnConstraints().add(new ColumnConstraints(200));
         Text nText = new Text("Количество переменных");
         Text mText = new Text("Количество ограничений");
 
@@ -207,6 +210,7 @@ public class SimplexCreatingView {
     public void createRight() {
         varsCheckBoxes = new ArrayList<>();
         varsCheckBoxesBox = new VBox();
+        varsCheckBoxesBox.setPadding(new Insets(15));
         varsCheckBoxesBox.setOnMouseEntered(event -> {
             varsCheckBoxesBox.setBorder(Border.EMPTY);
         });

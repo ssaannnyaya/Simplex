@@ -270,6 +270,7 @@ public class SimplexView {
 
     public VBox getSolvingSteps() {
         VBox solvingSteps = new VBox();
+        solvingSteps.setPadding(new Insets(20));
         solvingSteps.getChildren().clear();
         solvingSteps.getChildren().add(getFunction());
         for (int i = 0; i <= curStep; i++) {
