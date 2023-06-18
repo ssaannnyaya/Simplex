@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class SimplexTable {
     private transient int n;
@@ -15,7 +14,6 @@ public class SimplexTable {
     private transient int[] colX;
     private transient int[] rowX;
     boolean isMinimisation;
-    static Logger log = Logger.getLogger(SimplexTable.class.getName());
 
     /**
      * Конструктор со всеми параметрами
@@ -129,7 +127,7 @@ public class SimplexTable {
                 table[m][j] = new Fraction(data[j]);
             }
         }catch (IOException e){
-            log.info(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -142,7 +140,7 @@ public class SimplexTable {
                 new FileOutputStream(filePath), StandardCharsets.UTF_8))) {
             writer.write(this.toString());
         }catch (IOException e){
-            log.info(e.getMessage());
+            e.printStackTrace();
         }
     }
 
