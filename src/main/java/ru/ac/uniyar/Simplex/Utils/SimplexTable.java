@@ -145,7 +145,7 @@ public class SimplexTable {
     }
 
     public SimplexTable clone(){
-        Fraction[][] newTable = new Fraction[m + 1][n + 1];     //копируем данные в новую таблицу без целевого столбца
+        Fraction[][] newTable = new Fraction[m + 1][n + 1];
         for (int j = 0; j <= n; j++){
             for (int i = 0; i <= m; i++){
                 newTable[i][j] = table[i][j];
@@ -248,7 +248,7 @@ public class SimplexTable {
      * @param row ряд, где находится опорный элемент
      * @param col столбец, где находится опорный элемент
      */
-    public void simplexStep(int row, int col){  //NOPMD
+    public void simplexStep(int row, int col){
         int box = colX[col];
         colX[col] = rowX[row];
         rowX[row] = box;
@@ -515,7 +515,7 @@ public class SimplexTable {
                 if (!func[i].equals(Fraction.one())) {
                     str.append(func[i].getFrString(isDecimal));
                 }
-                str.append("x").append(i > 10 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
+                str.append("x").append(i > 9 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
             }
             if (func[i].lessThen(Fraction.zero())) {
                 if (func[i].equals(Fraction.one().negative())) {
@@ -523,7 +523,7 @@ public class SimplexTable {
                 } else {
                     str.append(func[i].getFrString(isDecimal));
                 }
-                str.append("x").append(i > 10 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
+                str.append("x").append(i > 9 ? "\u2081": "").append((char) ('\u2080' + ((i + 1) % 10)));
             }
         }
         if (func[func.length - 1].moreThen(Fraction.zero())) {

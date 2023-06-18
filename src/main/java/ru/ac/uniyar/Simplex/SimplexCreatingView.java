@@ -161,7 +161,7 @@ public class SimplexCreatingView {
         int width = 60;
 
         for (int j = 0; j < nSpinner.getValue(); j++) {
-            Text text = new Text("x" + (j + 1 > 10 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
+            Text text = new Text("x" + (j + 1 > 9 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
             text.setFont(new Font(16));
             centerPane.add(text, j + 1, 0);
             GridPane.setHalignment(text, HPos.CENTER);
@@ -214,7 +214,7 @@ public class SimplexCreatingView {
             varsCheckBoxesBox.setBorder(Border.EMPTY);
         });
         for (int j = 0; j < nSpinner.getValue(); j++) {
-            CheckBox checkBox = new CheckBox("x" + (j + 1 > 10 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
+            CheckBox checkBox = new CheckBox("x" + (j + 1 > 9 ? "\u2081": "") + ((char) ('\u2080' + ((j + 1) % 10))));
             checkBox.setFont(new Font(16));
             checkBox.setOnAction(event -> {
                 for (int i = 0; i < nSpinner.getValue(); i++) {

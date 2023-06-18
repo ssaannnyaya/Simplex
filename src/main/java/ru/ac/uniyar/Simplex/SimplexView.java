@@ -129,7 +129,7 @@ public class SimplexView {
             Rectangle rectangleHigh = new Rectangle(width, high);
             rectangleHigh.setFill(Color.LIGHTGRAY);
             int x = Math.abs(tusk.getColX()[j]);
-            Label cellInHigh = new Label("x" + (x > 10 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
+            Label cellInHigh = new Label("x" + (x > 9 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
             cellInHigh.setFont(new Font(16));
 
             GridPane.setHalignment(cellInHigh, HPos.CENTER);
@@ -162,7 +162,7 @@ public class SimplexView {
             rectangleLeft.setFill(Color.LIGHTGRAY);
 
             int x = Math.abs(tusk.getRowX()[i]);
-            Label cellInLeft = new Label("x" + (x > 10 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
+            Label cellInLeft = new Label("x" + (x > 9 ? "\u2081": "") + ((char) ('\u2080' + (x % 10))));
             cellInLeft.setFont(new Font(16));
 
             GridPane.setHalignment(cellInLeft, HPos.CENTER);
